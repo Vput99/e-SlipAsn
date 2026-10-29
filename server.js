@@ -72,7 +72,7 @@ function parseNIPBKN(nip) {
   const currentYear = new Date().getFullYear();
 
   // Validasi batas tahun & bulan lahir
-  if (thnLahir < 1940 || thnLahir > currentYear - 17) {
+  if (thnLahir < 1900 || thnLahir > currentYear - 17) {
     return { valid: false, message: 'Tahun lahir pada NIP tidak valid' };
   }
   if (blnLahir < 1 || blnLahir > 12 || tglLahir < 1 || tglLahir > 31) {
