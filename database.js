@@ -47,6 +47,13 @@ try {
   // Kolom role sudah ada
 }
 
+// Migrasi skema: pastikan kolom status_pegawai ada di master_pegawai
+try {
+  db.exec(`ALTER TABLE master_pegawai ADD COLUMN status_pegawai TEXT DEFAULT 'Aktif'`);
+} catch (e) {
+  // Kolom status_pegawai sudah ada
+}
+
 /**
  * Hash password dengan SHA-256 + Salt
  */
@@ -520,6 +527,12 @@ module.exports = {
     const p = stmt.get(cleanNip);
     if (!p) return null;
 
+    const slip = p.slip_gaji_json ? JSON.parse(p.slip_gaji_json) : null;
+    const isGajiNol = slip && (Number(slip.gajiKotor) === 0 || slip.gajiKotor === '0' || slip.statusKeaktifan === 'Tidak Aktif');
+    const isTidakAktif = p.status_pegawai === 'Tidak Aktif' || isGajiNol;
+    const isPppk = (p.nip.length === 18 && parseInt(p.nip.substring(12, 14), 10) >= 20);
+    const statusPegawai = isTidakAktif ? 'Tidak Aktif' : (isPppk ? 'PPPK Aktif' : 'PNS Aktif');
+
     return {
       nip: p.nip,
       nama: p.nama,
@@ -529,10 +542,11 @@ module.exports = {
       satker: p.satker,
       golongan: p.golongan,
       jabatan: p.jabatan,
-      statusPegawai: 'PNS Aktif',
+      statusPegawai: statusPegawai,
+      statusKeaktifan: isTidakAktif ? 'Tidak Aktif' : 'Aktif',
       email: p.email,
       noHp: p.no_hp,
-      slipGaji: p.slip_gaji_json ? JSON.parse(p.slip_gaji_json) : null
+      slipGaji: slip
     };
   },
 
@@ -540,19 +554,28 @@ module.exports = {
   getAllPegawai() {
     const stmt = db.prepare('SELECT * FROM master_pegawai ORDER BY nama ASC');
     const rows = stmt.all();
-    return rows.map(p => ({
-      nip: p.nip,
-      nama: p.nama,
-      nik: p.nik || '',
-      instansi: p.instansi || 'Dinas Pendidikan',
-      satker: p.satker || 'Unit Kerja ASN',
-      golongan: p.golongan || 'Golongan III',
-      jabatan: p.jabatan || 'Aparatur Sipil Negara',
-      statusPegawai: (p.nip.length === 18 && parseInt(p.nip.substring(12, 14), 10) >= 20) ? 'PPPK Aktif' : 'PNS Aktif',
-      email: p.email || '',
-      noHp: p.no_hp || '',
-      slipGaji: p.slip_gaji_json ? JSON.parse(p.slip_gaji_json) : null
-    }));
+    return rows.map(p => {
+      const slip = p.slip_gaji_json ? JSON.parse(p.slip_gaji_json) : null;
+      const isGajiNol = slip && (Number(slip.gajiKotor) === 0 || slip.gajiKotor === '0' || slip.statusKeaktifan === 'Tidak Aktif');
+      const isTidakAktif = p.status_pegawai === 'Tidak Aktif' || isGajiNol;
+      const isPppk = (p.nip.length === 18 && parseInt(p.nip.substring(12, 14), 10) >= 20);
+      const statusPegawai = isTidakAktif ? 'Tidak Aktif' : (isPppk ? 'PPPK Aktif' : 'PNS Aktif');
+
+      return {
+        nip: p.nip,
+        nama: p.nama,
+        nik: p.nik || '',
+        instansi: p.instansi || 'Dinas Pendidikan',
+        satker: p.satker || 'Unit Kerja ASN',
+        golongan: p.golongan || 'Golongan III',
+        jabatan: p.jabatan || 'Aparatur Sipil Negara',
+        statusPegawai: statusPegawai,
+        statusKeaktifan: isTidakAktif ? 'Tidak Aktif' : 'Aktif',
+        email: p.email || '',
+        noHp: p.no_hp || '',
+        slipGaji: slip
+      };
+    });
   },
 
   // Simpan / Perbarui Slip Gaji Pegawai
@@ -617,41 +640,48 @@ module.exports = {
       const totalPotongan = cleanNum(parts[27]);
       const gajiBersih = cleanNum(parts[28]);
 
-      const gajiPokok = Math.round(gajiKotor * 0.65) || 4000000;
-      const tunjanganKeluarga = Math.round(gajiKotor * 0.10) || 400000;
-      const tunjanganJabatan = Math.round(gajiKotor * 0.15) || 600000;
-      const tunjanganBeras = (gajiKotor - (gajiPokok + tunjanganKeluarga + tunjanganJabatan)) || 289680;
+      const isTidakAktif = (gajiKotor === 0);
+      const isPppk = nip.substring(12, 14) >= '20';
+      const statusPegawai = isTidakAktif ? 'Tidak Aktif' : (isPppk ? 'PPPK Aktif' : 'PNS Aktif');
+
+      const gajiPokok = isTidakAktif ? 0 : (Math.round(gajiKotor * 0.65) || 4000000);
+      const tunjanganKeluarga = isTidakAktif ? 0 : (Math.round(gajiKotor * 0.10) || 400000);
+      const tunjanganJabatan = isTidakAktif ? 0 : (Math.round(gajiKotor * 0.15) || 600000);
+      const tunjanganBeras = isTidakAktif ? 0 : ((gajiKotor - (gajiPokok + tunjanganKeluarga + tunjanganJabatan)) || 289680);
 
       const slipObj = {
         periode: "September 2026",
-        nomorSlip: `SLIP/2026/09/${nip.substring(12, 18)}`,
+        nomorSlip: isTidakAktif ? `NONAKTIF/2026/09/${nip.substring(12, 18)}` : `SLIP/2026/09/${nip.substring(12, 18)}`,
+        statusKeaktifan: isTidakAktif ? 'Tidak Aktif' : 'Aktif',
+        statusPegawai: statusPegawai,
         rekening: rekening || `0062${nip.substring(10, 16)}`,
         bankPenyalur: "PT BPD JATIM (BANK JATIM)",
         pendapatan: {
           gajiPokok: gajiPokok,
           tunjanganKeluarga: tunjanganKeluarga,
           tunjanganJabatan: tunjanganJabatan,
-          tunjanganBeras: tunjanganBeras > 0 ? tunjanganBeras : 289680,
+          tunjanganBeras: tunjanganBeras > 0 ? tunjanganBeras : (isTidakAktif ? 0 : 289680),
           tunjanganKinerja: 0,
-          tunjanganUmum: 185000
+          tunjanganUmum: isTidakAktif ? 0 : 185000
         },
-        gajiKotor: gajiKotor || (gajiPokok + tunjanganKeluarga + tunjanganJabatan + 289680),
+        gajiKotor: gajiKotor,
         potongan: {
-          korpri: korpri || 10000,
-          zakat: zakat || 0,
-          bpdKmg: bpdKmg || 0,
-          koperasi: koperasi + koperasiHarapan + koperasiGuyub,
-          bank: bankBri + bankBtn + bankBtpn + bankBws,
-          iwpBpjs: Math.round(gajiPokok * 0.04) || 160000,
-          taperum: 10000,
+          korpri: isTidakAktif ? 0 : (korpri || 10000),
+          zakat: isTidakAktif ? 0 : (zakat || 0),
+          bpdKmg: isTidakAktif ? 0 : (bpdKmg || 0),
+          koperasi: isTidakAktif ? 0 : (koperasi + koperasiHarapan + koperasiGuyub),
+          bank: isTidakAktif ? 0 : (bankBri + bankBtn + bankBtpn + bankBws),
+          iwpBpjs: isTidakAktif ? 0 : (Math.round(gajiPokok * 0.04) || 160000),
+          taperum: isTidakAktif ? 0 : 10000,
           pph21: 0,
-          lainLain: lainLain || sosial || 0
+          lainLain: isTidakAktif ? 0 : (lainLain || sosial || 0)
         },
-        totalPotongan: totalPotongan || (korpri + zakat + bpdKmg + koperasi + lainLain),
-        totalGajiBersih: gajiBersih || ((gajiKotor || 5000000) - (totalPotongan || 500000)),
-        statusTte: "Tersertifikasi BSrE",
+        totalPotongan: isTidakAktif ? 0 : (totalPotongan || (korpri + zakat + bpdKmg + koperasi + lainLain)),
+        totalGajiBersih: isTidakAktif ? 0 : (gajiBersih || (gajiKotor - totalPotongan)),
+        statusTte: isTidakAktif ? "Pegawai Tidak Aktif" : "Tersertifikasi BSrE",
         tanggalTerbit: "25 September 2026",
-        bendahara: "Dra. ERNA NURLAYLI, SE."
+        bendahara: "Dra. ERNA NURLAYLI, SE.",
+        keterangan: isTidakAktif ? "Pegawai dinyatakan TIDAK AKTIF pada instansi ini (Gaji kotor berkas Rp 0)" : "Slip gaji resmi Dinas Pendidikan"
       };
 
       // Pastikan pegawai ada di master_pegawai
@@ -659,13 +689,13 @@ module.exports = {
       const existing = checkStmt.get(nip);
       if (!existing && nama) {
         const insStmt = db.prepare(`
-          INSERT INTO master_pegawai (nip, nama, nik, instansi, satker, golongan, jabatan, email, no_hp, slip_gaji_json)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          INSERT INTO master_pegawai (nip, nama, nik, instansi, satker, golongan, jabatan, email, no_hp, slip_gaji_json, status_pegawai)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
-        insStmt.run(nip, nama, `3571${nip.substring(0, 8)}0001`, 'Dinas Pendidikan', 'Dinas Pendidikan Kota/Kabupaten', 'Penata / Gol. III', 'Aparatur Sipil Negara', '', '', JSON.stringify(slipObj));
+        insStmt.run(nip, nama, `3571${nip.substring(0, 8)}0001`, 'Dinas Pendidikan', 'Dinas Pendidikan Kota/Kabupaten', isPppk ? 'PPPK Golongan IX' : 'Penata / Gol. III', 'Aparatur Sipil Negara', '', '', JSON.stringify(slipObj), statusPegawai);
       } else {
-        const updStmt = db.prepare('UPDATE master_pegawai SET slip_gaji_json = ? WHERE nip = ?');
-        updStmt.run(JSON.stringify(slipObj), nip);
+        const updStmt = db.prepare('UPDATE master_pegawai SET slip_gaji_json = ?, status_pegawai = ? WHERE nip = ?');
+        updStmt.run(JSON.stringify(slipObj), statusPegawai, nip);
       }
       updatedCount++;
     }
@@ -712,10 +742,10 @@ module.exports = {
     db.exec('BEGIN TRANSACTION');
 
     const checkStmt = db.prepare('SELECT * FROM master_pegawai WHERE nip = ?');
-    const updateStmt = db.prepare('UPDATE master_pegawai SET slip_gaji_json = ? WHERE nip = ?');
+    const updateStmt = db.prepare('UPDATE master_pegawai SET slip_gaji_json = ?, status_pegawai = ? WHERE nip = ?');
     const insertStmt = db.prepare(`
-      INSERT INTO master_pegawai (nip, nama, nik, instansi, satker, golongan, jabatan, email, no_hp, slip_gaji_json)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO master_pegawai (nip, nama, nik, instansi, satker, golongan, jabatan, email, no_hp, slip_gaji_json, status_pegawai)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     // Deduplikasi data agar baris tanda tangan di bagian akhir berkas tidak menimpa data gaji ASN yang sah
@@ -744,48 +774,54 @@ module.exports = {
       const nama = (item.nama || '').trim();
       const rekening = (item.rekening || '').replace(/['"]/g, '').trim();
       const gajiKotor = parseInt(item.gajiKotor, 10) || 0;
+      const isTidakAktif = (gajiKotor === 0 || item.isTidakAktif === true || item.statusKeaktifan === 'Tidak Aktif' || item.statusPegawai === 'Tidak Aktif');
+      const isPPPK = nip.substring(12, 14) >= '20';
+      const statusPegawai = isTidakAktif ? 'Tidak Aktif' : (isPPPK ? 'PPPK Aktif' : 'PNS Aktif');
+      const statusKeaktifan = isTidakAktif ? 'Tidak Aktif' : 'Aktif';
       
       const pot = item.potongan || {};
-      const potBpd = parseInt(item.potBpd !== undefined ? item.potBpd : (pot.bpd || pot.bpdKmg), 10) || 0;
-      const potKorpri = parseInt(item.potKorpri !== undefined ? item.potKorpri : pot.korpri, 10) || 0;
-      const potSosial = parseInt(item.potSosial !== undefined ? item.potSosial : pot.sosial, 10) || 0;
-      const potZakat = parseInt(item.potZakat !== undefined ? item.potZakat : pot.zakat, 10) || 0;
-      const potKopTentrem = parseInt(item.potKopTentrem !== undefined ? item.potKopTentrem : pot.kopTentrem, 10) || 0;
-      const potKopKgr = parseInt(item.potKopKgr !== undefined ? item.potKopKgr : pot.kopKgr, 10) || 0;
-      const potKopHarapan = parseInt(item.potKopHarapan !== undefined ? item.potKopHarapan : pot.kopHarapan, 10) || 0;
-      const potKopGuyub = parseInt(item.potKopGuyub !== undefined ? item.potKopGuyub : pot.kopGuyub, 10) || 0;
-      const potBprJatim = parseInt(item.potBprJatim !== undefined ? item.potBprJatim : pot.bprJatim, 10) || 0;
-      const potJoyoboyo = parseInt(item.potJoyoboyo !== undefined ? item.potJoyoboyo : pot.joyoboyo, 10) || 0;
-      const potBprKota = parseInt(item.potBprKota !== undefined ? item.potBprKota : pot.bprKota, 10) || 0;
-      const potBankLain = parseInt(item.potBankLain !== undefined ? item.potBankLain : (pot.bankLain || pot.bri || pot.btn), 10) || 0;
-      const potDharmaWanita = parseInt(item.potDharmaWanita !== undefined ? item.potDharmaWanita : pot.dharmaWanita, 10) || 0;
-      const potAdministrasi = parseInt(item.potAdministrasi !== undefined ? item.potAdministrasi : (pot.administrasi || pot.lainLain), 10) || 0;
-      const potLainLain = parseInt(item.potLainLain !== undefined ? item.potLainLain : pot.lainLain, 10) || potAdministrasi;
+      const potBpd = isTidakAktif ? 0 : (parseInt(item.potBpd !== undefined ? item.potBpd : (pot.bpd || pot.bpdKmg), 10) || 0);
+      const potKorpri = isTidakAktif ? 0 : (parseInt(item.potKorpri !== undefined ? item.potKorpri : pot.korpri, 10) || 0);
+      const potSosial = isTidakAktif ? 0 : (parseInt(item.potSosial !== undefined ? item.potSosial : pot.sosial, 10) || 0);
+      const potZakat = isTidakAktif ? 0 : (parseInt(item.potZakat !== undefined ? item.potZakat : pot.zakat, 10) || 0);
+      const potKopTentrem = isTidakAktif ? 0 : (parseInt(item.potKopTentrem !== undefined ? item.potKopTentrem : pot.kopTentrem, 10) || 0);
+      const potKopKgr = isTidakAktif ? 0 : (parseInt(item.potKopKgr !== undefined ? item.potKopKgr : pot.kopKgr, 10) || 0);
+      const potKopHarapan = isTidakAktif ? 0 : (parseInt(item.potKopHarapan !== undefined ? item.potKopHarapan : pot.kopHarapan, 10) || 0);
+      const potKopGuyub = isTidakAktif ? 0 : (parseInt(item.potKopGuyub !== undefined ? item.potKopGuyub : pot.kopGuyub, 10) || 0);
+      const potBprJatim = isTidakAktif ? 0 : (parseInt(item.potBprJatim !== undefined ? item.potBprJatim : pot.bprJatim, 10) || 0);
+      const potJoyoboyo = isTidakAktif ? 0 : (parseInt(item.potJoyoboyo !== undefined ? item.potJoyoboyo : pot.joyoboyo, 10) || 0);
+      const potBprKota = isTidakAktif ? 0 : (parseInt(item.potBprKota !== undefined ? item.potBprKota : pot.bprKota, 10) || 0);
+      const potBankLain = isTidakAktif ? 0 : (parseInt(item.potBankLain !== undefined ? item.potBankLain : (pot.bankLain || pot.bri || pot.btn), 10) || 0);
+      const potDharmaWanita = isTidakAktif ? 0 : (parseInt(item.potDharmaWanita !== undefined ? item.potDharmaWanita : pot.dharmaWanita, 10) || 0);
+      const potAdministrasi = isTidakAktif ? 0 : (parseInt(item.potAdministrasi !== undefined ? item.potAdministrasi : (pot.administrasi || pot.lainLain), 10) || 0);
+      const potLainLain = isTidakAktif ? 0 : (parseInt(item.potLainLain !== undefined ? item.potLainLain : pot.lainLain, 10) || potAdministrasi);
 
       const sumPotonganRincian = potBpd + potKorpri + potSosial + potZakat + potKopTentrem + potKopKgr + potKopHarapan + potKopGuyub + potBprJatim + potJoyoboyo + potBprKota + potBankLain + potDharmaWanita + potLainLain;
-      const totalPotongan = parseInt(item.totalPotongan, 10) || sumPotonganRincian;
-      let totalGajiBersih = parseInt(item.gajiBersih !== undefined ? item.gajiBersih : item.totalGajiBersih, 10);
-      if (!totalGajiBersih || isNaN(totalGajiBersih)) {
+      const totalPotongan = isTidakAktif ? 0 : (parseInt(item.totalPotongan, 10) || sumPotonganRincian);
+      let totalGajiBersih = isTidakAktif ? 0 : parseInt(item.gajiBersih !== undefined ? item.gajiBersih : item.totalGajiBersih, 10);
+      if (!isTidakAktif && (!totalGajiBersih || isNaN(totalGajiBersih))) {
         totalGajiBersih = Math.max(0, gajiKotor - totalPotongan);
       }
 
-      const gajiPokok = Math.round(gajiKotor * 0.65) || 4000000;
-      const tunjanganKeluarga = Math.round(gajiKotor * 0.10) || 400000;
-      const tunjanganJabatan = Math.round(gajiKotor * 0.15) || 600000;
-      const tunjanganBeras = (gajiKotor - (gajiPokok + tunjanganKeluarga + tunjanganJabatan)) || 289680;
+      const gajiPokok = isTidakAktif ? 0 : (Math.round(gajiKotor * 0.65) || 4000000);
+      const tunjanganKeluarga = isTidakAktif ? 0 : (Math.round(gajiKotor * 0.10) || 400000);
+      const tunjanganJabatan = isTidakAktif ? 0 : (Math.round(gajiKotor * 0.15) || 600000);
+      const tunjanganBeras = isTidakAktif ? 0 : ((gajiKotor - (gajiPokok + tunjanganKeluarga + tunjanganJabatan)) || 289680);
 
       const slipObj = {
         periode: periode,
-        nomorSlip: `SLIP/${tahunDigit}/${bulanDigit}/${nip.substring(12, 18)}`,
+        nomorSlip: isTidakAktif ? `NONAKTIF/${tahunDigit}/${bulanDigit}/${nip.substring(12, 18)}` : `SLIP/${tahunDigit}/${bulanDigit}/${nip.substring(12, 18)}`,
+        statusKeaktifan: statusKeaktifan,
+        statusPegawai: statusPegawai,
         rekening: rekening || `0062${nip.substring(10, 16)}`,
         bankPenyalur: item.bankPenyalur || "PT BPD JATIM (BANK JATIM)",
         pendapatan: {
           gajiPokok: gajiPokok,
           tunjanganKeluarga: tunjanganKeluarga,
           tunjanganJabatan: tunjanganJabatan,
-          tunjanganBeras: tunjanganBeras > 0 ? tunjanganBeras : 289680,
+          tunjanganBeras: tunjanganBeras > 0 ? tunjanganBeras : (isTidakAktif ? 0 : 289680),
           tunjanganKinerja: 0,
-          tunjanganUmum: 185000
+          tunjanganUmum: isTidakAktif ? 0 : 185000
         },
         gajiKotor: gajiKotor,
         potongan: {
@@ -811,15 +847,17 @@ module.exports = {
         },
         totalPotongan: totalPotongan,
         totalGajiBersih: totalGajiBersih,
-        statusTte: "Tersertifikasi BSrE",
+        statusTte: isTidakAktif ? "Pegawai Tidak Aktif" : "Tersertifikasi BSrE",
         tanggalTerbit: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
         bendahara: "Dra. ERNA NURLAYLI, SE.",
-        keterangan: `Slip gaji bersumber dari ekstraksi berkas (${filename}) untuk periode ${periode}`
+        keterangan: isTidakAktif 
+          ? `Pegawai berstatus TIDAK AKTIF pada instansi ini (Gaji kotor berkas Rp 0) untuk periode ${periode}` 
+          : `Slip gaji bersumber dari ekstraksi berkas (${filename}) untuk periode ${periode}`
       };
 
       const existing = checkStmt.get(nip);
       if (existing) {
-        updateStmt.run(JSON.stringify(slipObj), nip);
+        updateStmt.run(JSON.stringify(slipObj), statusPegawai, nip);
       } else if (nama) {
         insertStmt.run(
           nip,
@@ -827,11 +865,12 @@ module.exports = {
           `3571${nip.substring(0, 8)}0001`,
           'Dinas Pendidikan',
           'Dinas Pendidikan Kota/Kabupaten',
-          nip.substring(12, 14) >= '20' ? 'PPPK Golongan IX' : 'Penata / Gol. III',
+          isPPPK ? 'PPPK Golongan IX' : 'Penata / Gol. III',
           'Aparatur Sipil Negara',
           '',
           '',
-          JSON.stringify(slipObj)
+          JSON.stringify(slipObj),
+          statusPegawai
         );
       }
 

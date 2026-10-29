@@ -281,6 +281,7 @@
             <option value="draft">Belum Terbit / Draf</option>
             <option value="pns">Khusus PNS</option>
             <option value="pppk">Khusus PPPK</option>
+            <option value="tidak-aktif">Pegawai Tidak Aktif (Gaji Rp 0)</option>
           </select>
 
           <!-- Refresh Button -->
@@ -1284,12 +1285,19 @@
       let totalBersih = 0;
       let countPns = 0;
       let countPppk = 0;
+      let countTidakAktif = 0;
 
       allPegawai.forEach(p => {
-        if (p.statusPegawai && p.statusPegawai.includes('PPPK')) countPppk++;
-        else countPns++;
+        const isTidakAktif = p.statusPegawai === 'Tidak Aktif' || (p.slipGaji && (Number(p.slipGaji.gajiKotor) === 0 || p.slipGaji.statusKeaktifan === 'Tidak Aktif'));
+        if (isTidakAktif) {
+          countTidakAktif++;
+        } else if (p.statusPegawai && p.statusPegawai.includes('PPPK')) {
+          countPppk++;
+        } else {
+          countPns++;
+        }
 
-        if (p.slipGaji) {
+        if (p.slipGaji && !isTidakAktif) {
           totalKotor += p.slipGaji.gajiKotor || 0;
           totalPotongan += p.slipGaji.totalPotongan || 0;
           totalBersih += p.slipGaji.totalGajiBersih || 0;
@@ -1300,7 +1308,7 @@
       document.getElementById('stat-total-pegawai').textContent = `${allPegawai.length} ASN`;
       document.getElementById('stat-total-potongan').textContent = formatRupiah(totalPotongan);
       document.getElementById('stat-gaji-bersih').textContent = formatRupiah(totalBersih);
-      document.getElementById('stat-badge-pns-pppk').textContent = `${countPns} PNS &bull; ${countPppk} PPPK`;
+      document.getElementById('stat-badge-pns-pppk').textContent = `${countPns} PNS • ${countPppk} PPPK ${countTidakAktif > 0 ? `• ${countTidakAktif} Tidak Aktif` : ''}`;
     }
 
     // Filter & Search Pegawai
@@ -1312,13 +1320,15 @@
         const matchSearch = p.nama.toLowerCase().includes(q) || p.nip.includes(q);
         if (!matchSearch) return false;
 
-        const hasSlip = p.slipGaji && (Number(p.slipGaji.totalGajiBersih) > 0 || Number(p.slipGaji.gajiKotor) > 0);
-        const isPppk = p.statusPegawai && p.statusPegawai.includes('PPPK');
+        const isTidakAktif = p.statusPegawai === 'Tidak Aktif' || (p.slipGaji && (Number(p.slipGaji.gajiKotor) === 0 || p.slipGaji.statusKeaktifan === 'Tidak Aktif'));
+        const hasSlip = !isTidakAktif && p.slipGaji && (Number(p.slipGaji.totalGajiBersih) > 0 || Number(p.slipGaji.gajiKotor) > 0);
+        const isPppk = !isTidakAktif && p.statusPegawai && p.statusPegawai.includes('PPPK');
 
         if (statusFilter === 'terbit') return hasSlip;
-        if (statusFilter === 'draft') return !hasSlip;
-        if (statusFilter === 'pns') return !isPppk;
+        if (statusFilter === 'draft') return !hasSlip && !isTidakAktif;
+        if (statusFilter === 'pns') return !isPppk && !isTidakAktif;
         if (statusFilter === 'pppk') return isPppk;
+        if (statusFilter === 'tidak-aktif') return isTidakAktif;
 
         return true;
       });
@@ -1351,24 +1361,29 @@
       let html = '';
       pageData.forEach((p, idx) => {
         const no = start + idx + 1;
-        const isPppk = p.statusPegawai && p.statusPegawai.includes('PPPK');
-        const badgeRole = isPppk
-          ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">PPPK</span>'
-          : '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">PNS</span>';
+        const isTidakAktif = p.statusPegawai === 'Tidak Aktif' || (p.slipGaji && (Number(p.slipGaji.gajiKotor) === 0 || p.slipGaji.statusKeaktifan === 'Tidak Aktif'));
+        const isPppk = !isTidakAktif && p.statusPegawai && p.statusPegawai.includes('PPPK');
+        const badgeRole = isTidakAktif
+          ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">Tidak Aktif</span>'
+          : (isPppk
+              ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">PPPK</span>'
+              : '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">PNS</span>');
 
         const slip = p.slipGaji;
-        const hasSlip = slip && (Number(slip.totalGajiBersih) > 0 || Number(slip.gajiKotor) > 0);
-        const gajiKotorStr = hasSlip ? formatRupiah(slip.gajiKotor) : '-';
-        const potonganStr = hasSlip ? formatRupiah(slip.totalPotongan) : '-';
-        const gajiBersihStr = hasSlip ? formatRupiah(slip.totalGajiBersih) : '-';
+        const hasSlip = !isTidakAktif && slip && (Number(slip.totalGajiBersih) > 0 || Number(slip.gajiKotor) > 0);
+        const gajiKotorStr = isTidakAktif ? '<span class="text-rose-600 font-semibold">Rp 0 (Non-Aktif)</span>' : (hasSlip ? formatRupiah(slip.gajiKotor) : '-');
+        const potonganStr = isTidakAktif ? 'Rp 0' : (hasSlip ? formatRupiah(slip.totalPotongan) : '-');
+        const gajiBersihStr = isTidakAktif ? 'Rp 0' : (hasSlip ? formatRupiah(slip.totalGajiBersih) : '-');
         const rekeningStr = (slip && slip.rekening) ? slip.rekening : (p.noHp || '-');
 
-        const badgeStatus = hasSlip
-          ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Terbit</span>'
-          : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>Draf</span>';
+        const badgeStatus = isTidakAktif
+          ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-300"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Non-Aktif</span>'
+          : (hasSlip
+              ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Terbit</span>'
+              : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>Draf</span>');
 
         html += `
-          <tr class="hover:bg-slate-50/80 transition-colors">
+          <tr class="hover:bg-slate-50/80 transition-colors ${isTidakAktif ? 'bg-slate-50/50' : ''}">
             <td class="py-3 px-4 text-center font-semibold text-slate-500">${no}</td>
             <td class="py-3 px-4">
               <div class="font-bold text-slate-900">${escapeHtml(p.nama)}</div>
@@ -2311,84 +2326,101 @@
 
         // 3. GAJI KOTOR (Hanya ambil dari kolom Gaji Kotor atau di samping kanan Rekening)
         let gajiKotor = 0;
-        if (colMap.gajiKotor !== -1 && row[colMap.gajiKotor] !== undefined) {
-          gajiKotor = parseIndonesianCurrency(row[colMap.gajiKotor]);
-        } else if (foundNipCol + 3 < row.length) {
-          gajiKotor = parseIndonesianCurrency(row[foundNipCol + 3]);
+        const explicitGajiKotorCol = (colMap.gajiKotor !== -1 && row[colMap.gajiKotor] !== undefined);
+        const rawGajiVal = explicitGajiKotorCol ? row[colMap.gajiKotor] : (foundNipCol + 3 < row.length ? row[foundNipCol + 3] : '');
+        const cleanGajiStr = String(rawGajiVal || '').trim();
+
+        if (cleanGajiStr !== '' && cleanGajiStr !== '-' && cleanGajiStr !== '0' && cleanGajiStr !== '0,00') {
+          gajiKotor = parseIndonesianCurrency(cleanGajiStr);
+        } else {
+          gajiKotor = 0;
         }
 
-        // Validasi batas wajar gaji kotor (Rp 1.000.000 s/d Rp 40.000.000)
-        if (gajiKotor < 1000000 || gajiKotor > 50000000) {
-          for (let c = 0; c < row.length; c++) {
-            if (c === foundNipCol || c === (colMap.rekening !== -1 ? colMap.rekening : foundNipCol + 2)) continue;
-            const val = parseIndonesianCurrency(row[c]);
-            if (val >= 2000000 && val <= 35000000) {
-              gajiKotor = val;
-              break;
+        // ATURAN RESMI SISTEM:
+        // Jika berkas Excel tertulis gaji kotor 0 (atau kosong / strip), maka pegawai dinyatakan TIDAK AKTIF pada instansi ini.
+        const isTidakAktif = (cleanGajiStr === '' || cleanGajiStr === '0' || cleanGajiStr === '0,00' || cleanGajiStr === '-' || gajiKotor === 0);
+
+        if (!isTidakAktif && (gajiKotor < 1000000 || gajiKotor > 50000000)) {
+          if (!explicitGajiKotorCol) {
+            for (let c = 0; c < row.length; c++) {
+              if (c === foundNipCol || c === (colMap.rekening !== -1 ? colMap.rekening : foundNipCol + 2)) continue;
+              const val = parseIndonesianCurrency(row[c]);
+              if (val >= 2000000 && val <= 35000000) {
+                gajiKotor = val;
+                break;
+              }
             }
           }
         }
 
         // 4. TOTAL POTONGAN & GAJI BERSIH DARI BERKAS
         let totalPotongan = 0;
-        if (colMap.totalPotongan !== -1 && row[colMap.totalPotongan] !== undefined) {
+        if (!isTidakAktif && colMap.totalPotongan !== -1 && row[colMap.totalPotongan] !== undefined) {
           totalPotongan = parseIndonesianCurrency(row[colMap.totalPotongan]);
         }
 
         let gajiBersih = 0;
-        if (colMap.gajiBersih !== -1 && row[colMap.gajiBersih] !== undefined) {
+        if (!isTidakAktif && colMap.gajiBersih !== -1 && row[colMap.gajiBersih] !== undefined) {
           gajiBersih = parseIndonesianCurrency(row[colMap.gajiBersih]);
         }
 
         // 5. RINCIAN SELURUH KOMPONEN POTONGAN
-        let potKorpri = colMap.korpri !== -1 ? parseIndonesianCurrency(row[colMap.korpri]) : 0;
-        let potSosial = colMap.sosial !== -1 ? parseIndonesianCurrency(row[colMap.sosial]) : 0;
-        let potZakat = colMap.zakat !== -1 ? parseIndonesianCurrency(row[colMap.zakat]) : 0;
+        let potKorpri = (!isTidakAktif && colMap.korpri !== -1) ? parseIndonesianCurrency(row[colMap.korpri]) : 0;
+        let potSosial = (!isTidakAktif && colMap.sosial !== -1) ? parseIndonesianCurrency(row[colMap.sosial]) : 0;
+        let potZakat = (!isTidakAktif && colMap.zakat !== -1) ? parseIndonesianCurrency(row[colMap.zakat]) : 0;
         
-        let tentremPokok = colMap.kopTentremPokok !== -1 ? parseIndonesianCurrency(row[colMap.kopTentremPokok]) : 0;
-        let tentremTotal = colMap.kopTentremTotal !== -1 ? parseIndonesianCurrency(row[colMap.kopTentremTotal]) : 0;
-        let potKopTentrem = tentremPokok > 0 ? tentremPokok : Math.max(0, tentremTotal - (potSosial + potZakat));
+        let tentremPokok = (!isTidakAktif && colMap.kopTentremPokok !== -1) ? parseIndonesianCurrency(row[colMap.kopTentremPokok]) : 0;
+        let tentremTotal = (!isTidakAktif && colMap.kopTentremTotal !== -1) ? parseIndonesianCurrency(row[colMap.kopTentremTotal]) : 0;
+        let potKopTentrem = isTidakAktif ? 0 : (tentremPokok > 0 ? tentremPokok : Math.max(0, tentremTotal - (potSosial + potZakat)));
 
-        let potKopKgr = colMap.kopKgr !== -1 ? parseIndonesianCurrency(row[colMap.kopKgr]) : 0;
-        let potKopHarapan = colMap.kopHarapan !== -1 ? parseIndonesianCurrency(row[colMap.kopHarapan]) : 0;
-        let potKopGuyub = colMap.kopGuyub !== -1 ? parseIndonesianCurrency(row[colMap.kopGuyub]) : 0;
+        let potKopKgr = (!isTidakAktif && colMap.kopKgr !== -1) ? parseIndonesianCurrency(row[colMap.kopKgr]) : 0;
+        let potKopHarapan = (!isTidakAktif && colMap.kopHarapan !== -1) ? parseIndonesianCurrency(row[colMap.kopHarapan]) : 0;
+        let potKopGuyub = (!isTidakAktif && colMap.kopGuyub !== -1) ? parseIndonesianCurrency(row[colMap.kopGuyub]) : 0;
         
-        let potBpd = colMap.bpd !== -1 ? parseIndonesianCurrency(row[colMap.bpd]) : 0;
-        let potBprJatim = colMap.bprJatim !== -1 ? parseIndonesianCurrency(row[colMap.bprJatim]) : 0;
-        let potJoyoboyo = colMap.joyoboyo !== -1 ? parseIndonesianCurrency(row[colMap.joyoboyo]) : 0;
-        let potBprKota = colMap.bprKota !== -1 ? parseIndonesianCurrency(row[colMap.bprKota]) : 0;
+        let potBpd = (!isTidakAktif && colMap.bpd !== -1) ? parseIndonesianCurrency(row[colMap.bpd]) : 0;
+        let potBprJatim = (!isTidakAktif && colMap.bprJatim !== -1) ? parseIndonesianCurrency(row[colMap.bprJatim]) : 0;
+        let potJoyoboyo = (!isTidakAktif && colMap.joyoboyo !== -1) ? parseIndonesianCurrency(row[colMap.joyoboyo]) : 0;
+        let potBprKota = (!isTidakAktif && colMap.bprKota !== -1) ? parseIndonesianCurrency(row[colMap.bprKota]) : 0;
         
         let potBankLain = 0;
-        colMap.bri.forEach(c => potBankLain += parseIndonesianCurrency(row[c]));
-        if (colMap.btn !== -1) potBankLain += parseIndonesianCurrency(row[colMap.btn]);
-        if (colMap.btpn !== -1) potBankLain += parseIndonesianCurrency(row[colMap.btpn]);
-        if (colMap.bws !== -1) potBankLain += parseIndonesianCurrency(row[colMap.bws]);
+        if (!isTidakAktif) {
+          colMap.bri.forEach(c => potBankLain += parseIndonesianCurrency(row[c]));
+          if (colMap.btn !== -1) potBankLain += parseIndonesianCurrency(row[colMap.btn]);
+          if (colMap.btpn !== -1) potBankLain += parseIndonesianCurrency(row[colMap.btpn]);
+          if (colMap.bws !== -1) potBankLain += parseIndonesianCurrency(row[colMap.bws]);
+        }
 
-        let potDharmaWanita = colMap.dharmaWanita !== -1 ? parseIndonesianCurrency(row[colMap.dharmaWanita]) : 0;
-        let potAdministrasi = colMap.administrasi !== -1 ? parseIndonesianCurrency(row[colMap.administrasi]) : 0;
-        let potLainLain = (colMap.lainLain !== -1 ? parseIndonesianCurrency(row[colMap.lainLain]) : 0) + potAdministrasi;
+        let potDharmaWanita = (!isTidakAktif && colMap.dharmaWanita !== -1) ? parseIndonesianCurrency(row[colMap.dharmaWanita]) : 0;
+        let potAdministrasi = (!isTidakAktif && colMap.administrasi !== -1) ? parseIndonesianCurrency(row[colMap.administrasi]) : 0;
+        let potLainLain = isTidakAktif ? 0 : ((colMap.lainLain !== -1 ? parseIndonesianCurrency(row[colMap.lainLain]) : 0) + potAdministrasi);
 
         // Akumulasi total seluruh rincian yang terbaca oleh sistem
-        const sumRincian = potKorpri + potSosial + potZakat + potKopTentrem + potKopKgr + potKopHarapan + potKopGuyub + potBpd + potBprJatim + potJoyoboyo + potBprKota + potBankLain + potDharmaWanita + potLainLain;
+        const sumRincian = isTidakAktif ? 0 : (potKorpri + potSosial + potZakat + potKopTentrem + potKopKgr + potKopHarapan + potKopGuyub + potBpd + potBprJatim + potJoyoboyo + potBprKota + potBankLain + potDharmaWanita + potLainLain);
 
         // Jika kolom total potongan kosong di berkas, gunakan akumulasi rincian
-        if (!totalPotongan || totalPotongan > 50000000) {
+        if (!isTidakAktif && (!totalPotongan || totalPotongan > 50000000)) {
           totalPotongan = sumRincian;
         }
 
         // Jika kolom gaji bersih kosong di berkas, hitung otomatis
-        if (!gajiBersih || gajiBersih > 50000000) {
+        if (!isTidakAktif && (!gajiBersih || gajiBersih > 50000000)) {
           gajiBersih = Math.max(0, gajiKotor - totalPotongan);
         }
 
         const selisih = totalPotongan - sumRincian;
-        const isMatch = Math.abs(selisih) <= 2;
+        const isMatch = isTidakAktif ? true : (Math.abs(selisih) <= 2);
+        const isPppk = (nip.length === 18 && parseInt(nip.substring(12, 14), 10) >= 20);
+        const statusPegawai = isTidakAktif ? 'Tidak Aktif' : (isPppk ? 'PPPK Aktif' : 'PNS Aktif');
+        const statusKeaktifan = isTidakAktif ? 'Tidak Aktif' : 'Aktif';
 
         results.push({
           nip: nip,
           nama: nama,
           rekening: rekening,
-          gajiKotor: gajiKotor,
+          gajiKotor: isTidakAktif ? 0 : gajiKotor,
+          statusKeaktifan: statusKeaktifan,
+          statusPegawai: statusPegawai,
+          isTidakAktif: isTidakAktif,
           potBpd: potBpd,
           potKorpri: potKorpri,
           potSosial: potSosial,
@@ -2409,11 +2441,11 @@
           potBank: potBpd + potBprJatim + potJoyoboyo + potBprKota + potBankLain,
           potLain: potDharmaWanita + potLainLain,
           sumRincian: sumRincian,
-          totalPotongan: totalPotongan,
+          totalPotongan: isTidakAktif ? 0 : totalPotongan,
           selisih: selisih,
           isMatch: isMatch,
-          gajiBersih: gajiBersih,
-          totalGajiBersih: gajiBersih
+          gajiBersih: isTidakAktif ? 0 : gajiBersih,
+          totalGajiBersih: isTidakAktif ? 0 : gajiBersih
         });
       }
 
@@ -2612,11 +2644,15 @@
         csvContent: csvContent
       };
 
+      // Hitung Aktif vs Tidak Aktif
+      const tidakAktifList = records.filter(r => r.isTidakAktif);
+      const aktifList = records.filter(r => !r.isTidakAktif);
+
       // Tampilkan Hasil di Modal
       document.getElementById('extractor-result-container').classList.remove('hidden');
       document.getElementById('ext-filename').textContent = filename;
       document.getElementById('ext-row-count').textContent = records.length + ' Pegawai ASN';
-      document.getElementById('ext-stat-pegawai').textContent = records.length + ' ASN';
+      document.getElementById('ext-stat-pegawai').textContent = `${aktifList.length} Aktif${tidakAktifList.length > 0 ? ` • ${tidakAktifList.length} Tidak Aktif` : ''}`;
       document.getElementById('ext-stat-kotor').textContent = formatRupiah(sumKotor);
       document.getElementById('ext-stat-potongan').textContent = formatRupiah(sumPotongan);
       document.getElementById('ext-stat-bersih').textContent = formatRupiah(sumBersih);
@@ -2680,13 +2716,18 @@
 
       records.forEach((r, i) => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-indigo-50/50 transition-colors group';
+        tr.className = `hover:bg-indigo-50/50 transition-colors group ${r.isTidakAktif ? 'bg-slate-50/60' : ''}`;
         tr.innerHTML = `
           <td class="py-2.5 px-3 text-slate-400 font-mono sticky left-0 bg-white group-hover:bg-indigo-50/50">${i + 1}</td>
           <td class="py-2.5 px-3 font-mono font-bold text-slate-900 sticky left-10 bg-white group-hover:bg-indigo-50/50">${r.nip}</td>
-          <td class="py-2.5 px-3 font-semibold text-slate-800 sticky left-44 bg-white group-hover:bg-indigo-50/50 shadow-r">${r.nama}</td>
+          <td class="py-2.5 px-3 font-semibold text-slate-800 sticky left-44 bg-white group-hover:bg-indigo-50/50 shadow-r">
+            ${r.nama}
+            ${r.isTidakAktif ? '<span class="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">Tidak Aktif</span>' : ''}
+          </td>
           <td class="py-2.5 px-3 font-mono text-slate-600">${r.rekening}</td>
-          <td class="py-2.5 px-3 text-right font-bold text-slate-900">${formatRupiah(r.gajiKotor)}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-slate-900">
+            ${r.isTidakAktif ? '<span class="text-rose-600 font-bold">Rp 0 <span class="text-[9px] block text-rose-500 font-normal">(Tidak Aktif)</span></span>' : formatRupiah(r.gajiKotor)}
+          </td>
           
           <!-- Rincian Potongan -->
           <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potKorpri)}</td>
@@ -2704,11 +2745,14 @@
           <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potLainLain)}</td>
 
           <!-- Total & Status Validasi -->
-          <td class="py-2.5 px-3 text-right font-bold text-rose-600 bg-rose-100/40">-${formatRupiah(r.totalPotongan)}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-rose-600 bg-rose-100/40">${r.isTidakAktif ? 'Rp 0' : `-${formatRupiah(r.totalPotongan)}`}</td>
           <td class="py-2.5 px-3 text-center">
-            ${r.isMatch ? 
-              `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="material-symbols-outlined text-[12px]">check_circle</span> 100% Cocok</span>` : 
-              `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200" title="Rincian terbaca: ${formatRupiah(r.sumRincian)}, Total berkas: ${formatRupiah(r.totalPotongan)}"><span class="material-symbols-outlined text-[12px]">warning</span> Selisih ${formatRupiah(Math.abs(r.selisih))}</span>`
+            ${r.isTidakAktif ? 
+              `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-300"><span class="material-symbols-outlined text-[12px]">person_off</span> Pegawai Non-Aktif</span>` :
+              (r.isMatch ? 
+                `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="material-symbols-outlined text-[12px]">check_circle</span> 100% Cocok</span>` : 
+                `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200" title="Rincian terbaca: ${formatRupiah(r.sumRincian)}, Total berkas: ${formatRupiah(r.totalPotongan)}"><span class="material-symbols-outlined text-[12px]">warning</span> Selisih ${formatRupiah(Math.abs(r.selisih))}</span>`
+              )
             }
           </td>
           <td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/30">${formatRupiah(r.gajiBersih)}</td>

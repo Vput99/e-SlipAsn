@@ -598,10 +598,16 @@
       const initial = (parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '');
       document.getElementById('card-avatar-initial').textContent = initial.toUpperCase() || 'ASN';
 
-      // Badge PNS / PPPK
-      const isPppk = p.statusPegawai && p.statusPegawai.includes('PPPK');
+      // Badge PNS / PPPK / Tidak Aktif
+      const slip = p.slipGaji || {};
+      const isTidakAktif = p.statusPegawai === 'Tidak Aktif' || Number(slip.gajiKotor) === 0 || slip.statusKeaktifan === 'Tidak Aktif';
+      const isPppk = !isTidakAktif && p.statusPegawai && p.statusPegawai.includes('PPPK');
       const badgeEl = document.getElementById('card-badge-status');
-      if (isPppk) {
+
+      if (isTidakAktif) {
+        badgeEl.textContent = 'Tidak Aktif';
+        badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-400/30';
+      } else if (isPppk) {
         badgeEl.textContent = 'PPPK Aktif';
         badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30';
       } else {
@@ -610,35 +616,34 @@
       }
 
       // Slip Gaji
-      const slip = p.slipGaji || {};
       const rekening = slip.rekening || `0062${p.nip.substring(10, 16)}`;
       document.getElementById('card-rekening').textContent = rekening;
 
       const pend = slip.pendapatan || {};
       const pot = slip.potongan || {};
 
-      const pokok = pend.gajiPokok || slip.gajiPokok || 4500000;
-      const keluarga = pend.tunjanganKeluarga || slip.tunjanganKeluarga || 450000;
-      const jabatan = pend.tunjanganJabatan || slip.tunjanganJabatan || 600000;
-      const beras = pend.tunjanganBeras || slip.tunjanganBeras || 289680;
-      const kinerja = pend.tunjanganKinerja || slip.tunjanganKinerja || 0;
-      const kotor = slip.gajiKotor || (pokok + keluarga + jabatan + beras + kinerja);
+      const pokok = isTidakAktif ? 0 : (pend.gajiPokok || slip.gajiPokok || 4500000);
+      const keluarga = isTidakAktif ? 0 : (pend.tunjanganKeluarga || slip.tunjanganKeluarga || 450000);
+      const jabatan = isTidakAktif ? 0 : (pend.tunjanganJabatan || slip.tunjanganJabatan || 600000);
+      const beras = isTidakAktif ? 0 : (pend.tunjanganBeras || slip.tunjanganBeras || 289680);
+      const kinerja = isTidakAktif ? 0 : (pend.tunjanganKinerja || slip.tunjanganKinerja || 0);
+      const kotor = isTidakAktif ? 0 : (slip.gajiKotor || (pokok + keluarga + jabatan + beras + kinerja));
 
       // 10 Potongan Resmi Dinas
-      const potBpd = pot.bpd || pot.bpdKmg || 0;
-      const potKorpri = pot.korpri || 0;
-      const potTentrem = pot.kopTentrem || 0;
-      const potKgr = pot.kopKgr || 0;
-      const potHarapan = pot.kopHarapan || 0;
-      const potGuyub = pot.kopGuyub || 0;
-      const potBprJatim = pot.bprJatim || 0;
-      const potJoyoboyo = pot.joyoboyo || 0;
-      const potBprKota = pot.bprKota || 0;
-      const potDw = pot.dharmaWanita || 0;
-      const potAdm = pot.administrasi || 0;
+      const potBpd = isTidakAktif ? 0 : (pot.bpd || pot.bpdKmg || 0);
+      const potKorpri = isTidakAktif ? 0 : (pot.korpri || 0);
+      const potTentrem = isTidakAktif ? 0 : (pot.kopTentrem || 0);
+      const potKgr = isTidakAktif ? 0 : (pot.kopKgr || 0);
+      const potHarapan = isTidakAktif ? 0 : (pot.kopHarapan || 0);
+      const potGuyub = isTidakAktif ? 0 : (pot.kopGuyub || 0);
+      const potBprJatim = isTidakAktif ? 0 : (pot.bprJatim || 0);
+      const potJoyoboyo = isTidakAktif ? 0 : (pot.joyoboyo || 0);
+      const potBprKota = isTidakAktif ? 0 : (pot.bprKota || 0);
+      const potDw = isTidakAktif ? 0 : (pot.dharmaWanita || 0);
+      const potAdm = isTidakAktif ? 0 : (pot.administrasi || 0);
 
-      const totalPot = slip.totalPotongan || (potBpd + potKorpri + potTentrem + potKgr + potHarapan + potGuyub + potBprJatim + potJoyoboyo + potBprKota + potDw + potAdm);
-      const bersih = slip.totalGajiBersih || (kotor - totalPot);
+      const totalPot = isTidakAktif ? 0 : (slip.totalPotongan || (potBpd + potKorpri + potTentrem + potKgr + potHarapan + potGuyub + potBprJatim + potJoyoboyo + potBprKota + potDw + potAdm));
+      const bersih = isTidakAktif ? 0 : (slip.totalGajiBersih || (kotor - totalPot));
 
       // Render Summary KPI
       document.getElementById('rekap-gaji-bersih').textContent = formatRupiah(bersih);
