@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="web_standard" name="shell-type">
+  <title>e-slipasn - Portal Slip Gaji ASN Resmi</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    @layer base {
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        overscroll-behavior: none;
+      }
+
+      main>:first-child {
+        margin-top: 0 !important;
+      }
+
+      main>:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script
+    id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed-dim": "#93ccff", "secondary-container": "#5bb8fe", "primary-container": "#0f2f57", "on-surface": "#0d1c2f", "on-secondary": "#ffffff", "error-container": "#ffdad6", "secondary": "#006398", "on-tertiary-fixed-variant": "#6e3900", "tertiary": "#2d1400", "inverse-surface": "#233144", "on-tertiary": "#ffffff", "surface-container-high": "#dde9ff", "primary": "#001a3a", "on-error-container": "#93000a", "on-background": "#0d1c2f", "surface-container": "#e6eeff", "on-primary": "#ffffff", "primary-fixed-dim": "#acc8f8", "on-tertiary-container": "#e17d11", "tertiary-fixed": "#ffdcc3", "primary-fixed": "#d5e3ff", "tertiary-fixed-dim": "#ffb77d", "inverse-on-surface": "#ebf1ff", "surface-dim": "#ccdbf4", "on-secondary-fixed-variant": "#004b73", "on-surface-variant": "#43474e", "on-tertiary-fixed": "#2f1500", "on-error": "#ffffff", "surface-container-highest": "#d5e3fd", "on-primary-container": "#7c98c6", "tertiary-container": "#4b2500", "outline-variant": "#c4c6cf", "surface-container-low": "#eff4ff", "background": "#f8f9ff", "on-secondary-container": "#00476e", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#2b4770", "surface-tint": "#445f8a", "inverse-primary": "#acc8f8", "secondary-fixed": "#cce5ff", "surface-bright": "#f8f9ff", "surface": "#f8f9ff", "error": "#ba1a1a", "on-primary-fixed": "#001b3c", "outline": "#74777f", "on-secondary-fixed": "#001d31", "surface-variant": "#d5e3fd" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem", "space-xl": "2.5rem", "space-sm": "0.5rem", "margin-mobile": "1rem", "space-lg": "1.5rem", "margin": "2rem", "gutter-mobile": "1rem" }, "fontFamily": { "body-lg": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "title-lg": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }], "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-xl-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }] } } } };</script>
+</head>
+
+<body class="bg-background font-body-md text-on-surface antialiased">
+  <header
+    class="fixed top-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-4"><a href="#"
+        class="flex items-center"><img alt="Logo e-slipasn" class="h-20 w-auto object-contain py-1"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAEX3f_89RCHmcTAjGIyuD45jKCDdgvsOzyN3IYDijEaIfVHIVwcIvNwf6EAje9APtizynh0MTnAXvCVmWWNXQDg29eJ-5QvB1HCqYQ2F-llAb9CpbVBh9TUhKxKTjhcv5xtZ5ggnK6ZSNlYebb_7WOrYTJ_qCRG0Z_APXi9VUYU3Y9PVa6unGkq_smQyRkVRoEDhDiGAlcf10UtkWYstNdcfUSlZcOTMAR3EHW9G-0WM2WfK8d9w0zswPyJHg8tkJKtI"></a>
+    </div>
+  </header>
+  <main class="w-full pt-20 bg-background min-h-screen">
+    <div class="flex flex-col w-full">
+      <div class="relative w-full overflow-hidden py-10 px-6 lg:px-12 max-w-7xl mx-auto">
+        <!-- Ambient Civic Glow Shapes -->
+        <div
+          class="absolute -top-32 -left-20 w-96 h-96 bg-secondary-fixed/30 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div
+          class="absolute top-1/2 -right-32 w-[30rem] h-[30rem] bg-surface-container-high/60 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <!-- Editorial Masthead Overline -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div class="flex items-center gap-3">
+            <span
+              class="px-3 py-1 bg-surface-container-high text-primary font-label-sm text-label-sm rounded-full tracking-wider uppercase flex items-center gap-1.5 shadow-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+              Portal Mandiri BKN / KemenPANRB
+            </span>
+            <span class="text-outline-variant text-body-sm font-body-sm">/</span>
+            <span class="text-on-surface-variant font-label-md text-label-md">Siklus Autentikasi Tahun Anggaran
+              2025</span>
+          </div>
+          <div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+            <span class="material-symbols-outlined text-[18px] text-secondary">verified</span>
+            <span class="">Terintegrasi SIASN &amp; Dukcapil Terpadu</span>
+          </div>
+        </div>
+        <!-- 2-Column Asymmetric Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
+          <!-- LEFT COLUMN: Guidance, Stepper & Regulatory Protocol (5 Cols) -->
+          <div class="lg:col-span-5 flex flex-col gap-6">
+            <!-- Informational Authority Banner Card -->
+            <div class="bg-primary text-on-primary rounded-xl p-6 lg:p-8 shadow-xl relative overflow-hidden">
+              <div class="absolute -right-12 -bottom-12 opacity-10 pointer-events-none">
+                <span class="material-symbols-outlined text-[180px] text-on-primary">account_balance</span>
+              </div>
+              <div class="flex items-center gap-2 mb-3">
+                <span
+                  class="px-2.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">
+                  Prosedur Resmi
+                </span>
+                <span class="text-primary-fixed-dim text-body-sm font-body-sm">Per BKN No. 4/2024</span>
+              </div>
+              <h1 class="font-headline-lg text-headline-lg font-bold text-on-primary tracking-tight mb-2">
+                Pendaftaran Akun Mandiri e-slipasn
+              </h1>
+              <p class="font-body-md text-body-md text-primary-fixed-dim leading-relaxed mb-6">
+                Penerbitan kredensial tunggal aparatur sipil negara untuk transparansi remunerasi, pemotongan PPh 21,
+                dan tanda tangan elektronik (TTE) tersertifikasi BSrE.
+              </p>
+              <!-- Interactive Micro Stepper -->
+              <div class="space-y-4 relative">
+                <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-primary-container"></div>
+                <!-- Step 1: Active -->
+                <div class="relative flex items-start gap-4 group cursor-pointer" onclick="setActiveStep(1)">
+                  <div
+                    class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md font-bold shadow-md ring-4 ring-primary-container z-10 transition-all"
+                    id="step-node-1">
+                    1
+                  </div>
+                  <div class="flex-1 bg-surface-container-lowest/10 backdrop-blur-sm p-3 rounded-lg">
+                    <div class="flex items-center justify-between">
+                      <span class="font-title-md text-title-md text-on-primary font-bold">Validasi NIP &amp; NIK</span>
+                      <span
+                        class="font-label-sm text-label-sm bg-secondary px-2 py-0.5 rounded text-on-secondary uppercase">Tahap
+                        Aktif</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-primary-fixed-dim mt-0.5">
+                      Pencocokan data biometrik Dukcapil &amp; status aktif database SIASN BKN.
+                    </p>
+                  </div>
+                </div>
+                <!-- Step 2: Next -->
+                <div
+                  class="relative flex items-start gap-4 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+                  onclick="setActiveStep(2)">
+                  <div
+                    class="w-8 h-8 rounded-full bg-primary-container text-primary-fixed-dim flex items-center justify-center font-label-md text-label-md font-bold z-10 transition-all"
+                    id="step-node-2">
+                    2
+                  </div>
+                  <div class="flex-1 p-3 rounded-lg bg-surface-container-lowest/5">
+                    <span class="font-title-md text-title-md text-on-primary font-semibold">Kelengkapan Satuan
+                      Kerja</span>
+                    <p class="font-body-sm text-body-sm text-primary-fixed-dim mt-0.5">
+                      Verifikasi SKPD, Unit Pelaksana Teknis, dan Pejabat Pengelola Kepegawaian.
+                    </p>
+                  </div>
+                </div>
+                <!-- Step 3: Final -->
+                <div
+                  class="relative flex items-start gap-4 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+                  onclick="setActiveStep(3)">
+                  <div
+                    class="w-8 h-8 rounded-full bg-primary-container text-primary-fixed-dim flex items-center justify-center font-label-md text-label-md font-bold z-10 transition-all"
+                    id="step-node-3">
+                    3
+                  </div>
+                  <div class="flex-1 p-3 rounded-lg bg-surface-container-lowest/5">
+                    <span class="font-title-md text-title-md text-on-primary font-semibold">Kredensial &amp; OTP
+                      Kedinasan</span>
+                    <p class="font-body-sm text-body-sm text-primary-fixed-dim mt-0.5">
+                      Pengamanan akun sandi ganda dan token ke nomor WhatsApp terdaftar.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Strict Requirements Card -->
+            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-md">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[24px]">assignment_turned_in</span>
+                </div>
+                <div>
+                  <h2 class="font-title-lg text-title-lg text-on-surface font-bold">Persyaratan Registrasi</h2>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Kriteria wajib kepatuhan aparatur negara
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-3 font-body-sm text-body-sm text-on-surface">
+                <div class="flex items-start gap-3 p-2.5 rounded-lg bg-surface-container-low">
+                  <span class="material-symbols-outlined text-[20px] text-secondary mt-0.5">check_circle</span>
+                  <p class="">Pegawai Negeri Sipil (PNS), PPPK, atau Pejabat Negara dengan status <strong>Aktif / Tidak
+                      Sedang CLTN</strong>.</p>
+                </div>
+                <div class="flex items-start gap-3 p-2.5 rounded-lg bg-surface-container-low">
+                  <span class="material-symbols-outlined text-[20px] text-secondary mt-0.5">check_circle</span>
+                  <p class="">Memiliki <strong>NIP 18 Digit</strong> terdaftar sinkron pada pangkalan data Sistem
+                    Informasi ASN Terpadu.</p>
+                </div>
+                <div class="flex items-start gap-3 p-2.5 rounded-lg bg-surface-container-low">
+                  <span class="material-symbols-outlined text-[20px] text-secondary mt-0.5">check_circle</span>
+                  <p class="">Memiliki akses aktif ke <strong>Email Kedinasan</strong> resmi kementerian/lembaga/pemda
+                    atau email pemberkasan.</p>
+                </div>
+              </div>
+              <!-- Important Security Note Box -->
+              <div class="mt-4 p-3.5 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed flex items-start gap-3">
+                <span class="material-symbols-outlined text-[20px] text-on-tertiary-fixed-variant mt-0.5">gavel</span>
+                <div class="text-body-sm font-body-sm">
+                  <span class="font-bold">Ketentuan Pidana:</span> Pemalsuan identitas atau penggunaan NIP bukan haknya
+                  melanggar UU ITE No. 1/2024 dan UU ASN No. 20/2023 Pasal 52.
+                </div>
+              </div>
+            </div>
+            <!-- Helpdesk & Agency Escalation Contact -->
+            <div class="bg-surface-container rounded-xl p-5 shadow-sm">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[20px] text-primary">support_agent</span>
+                  <span class="font-title-md text-title-md text-on-surface font-bold">Kendala Data SIASN?</span>
+                </div>
+                <span
+                  class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+                  Layanan BKD/BKPSDM
+                </span>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+                Jika NIP Anda tidak terbaca otomatis saat validasi, silakan hubungi Pengelola Kepegawaian (Subbag Umum
+                &amp; Kepegawaian) di instansi Anda.
+              </p>
+              <div class="grid grid-cols-2 gap-3">
+                <a class="flex items-center gap-2 p-2.5 bg-surface-container-lowest rounded-lg hover:bg-surface-container-high transition-colors shadow-sm"
+                  href="#">
+                  <span class="material-symbols-outlined text-[18px] text-secondary">forum</span>
+                  <div class="flex flex-col min-w-0">
+                    <span class="font-label-sm text-label-sm text-on-surface font-semibold truncate">Live Chat
+                      BKN</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant text-[10px]">Hari kerja
+                      08:00-16:00</span>
+                  </div>
+                </a>
+                <a class="flex items-center gap-2 p-2.5 bg-surface-container-lowest rounded-lg hover:bg-surface-container-high transition-colors shadow-sm"
+                  href="#">
+                  <span class="material-symbols-outlined text-[18px] text-secondary">quiz</span>
+                  <div class="flex flex-col min-w-0">
+                    <span class="font-label-sm text-label-sm text-on-surface font-semibold truncate">FAQ
+                      Registrasi</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant text-[10px]">Panduan Kode
+                      Satker</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- RIGHT COLUMN: Detailed Registration Form Card (7 Cols) -->
+          <div class="lg:col-span-7 flex flex-col">
+            <div class="bg-surface-container-lowest rounded-xl p-6 lg:p-10 shadow-xl relative">
+              <!-- Card Header & Status Ribbon -->
+              <div
+                class="flex flex-col gap-2 pb-6 mb-6 bg-surface-container-low -mx-6 lg:-mx-10 -mt-6 lg:-mt-10 p-6 lg:p-10 rounded-t-xl">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="px-2.5 py-1 rounded bg-secondary text-on-secondary font-label-sm text-label-sm font-bold tracking-wide">
+                      FORMULIR MANDIRI
+                    </span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">SSO ASN Level-3</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 text-secondary font-label-sm text-label-sm font-semibold">
+                    <span class="material-symbols-outlined text-[16px]">lock</span>
+                    <span class="">Enkripsi AES-256 Bit</span>
+                  </div>
+                </div>
+                <h2 class="font-headline-lg text-headline-lg text-primary font-bold">
+                  Registrasi Pegawai Baru
+                </h2>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                  Lengkapi data autentikasi untuk mengakses riwayat dan penerbitan slip gaji digital Anda.
+                </p>
+              </div>
+              <form class="space-y-6" id="asn-registration-form" onsubmit="handleRegistrationSubmit(event)">
+                <!-- Fieldset 1: Identitas Kepegawaian Dasar -->
+                <div class="space-y-4">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-6 h-6 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-sm text-label-sm font-bold">A</span>
+                    <h3 class="font-title-md text-title-md text-on-surface font-bold">Identitas Pokok Pegawai</h3>
+                  </div>
+                  <!-- NIP with Live Verification Action -->
+                  <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="input-nip">
+                      Nomor Induk Pegawai (NIP - 18 Digit) <span class="text-error font-bold">*</span>
+                    </label>
+                    <div class="relative flex items-center gap-2">
+                      <div class="relative flex-1">
+                        <span
+                          class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[20px]">badge</span>
+                        </span>
+                        <input
+                          class="w-full pl-11 pr-4 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                          id="input-nip" inputmode="numeric" maxlength="18" oninput="validateNIPLength(this)"
+                          placeholder="Contoh: 198803152011011002" required="" type="text">
+                      </div>
+                      <button
+                        class="px-4 py-3 bg-secondary text-on-secondary font-label-md text-label-md font-semibold rounded-lg hover:bg-on-secondary-container transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                        id="btn-validate-nip" onclick="checkBKNValidation()" type="button">
+                        <span class="material-symbols-outlined text-[18px]">manage_search</span>
+                        <span class="">Cek BKN</span>
+                      </button>
+                    </div>
+                    <div class="mt-1.5 hidden flex items-center gap-1.5 font-body-sm text-body-sm text-secondary"
+                      id="nip-feedback">
+                      <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                      <span class="">Data terverifikasi di SIASN: Pembina / Gol. IV/a</span>
+                    </div>
+                  </div>
+                  <!-- NIK & Full Name Grid -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="input-nik">
+                        NIK KTP (16 Digit Dukcapil) <span class="text-error font-bold">*</span>
+                      </label>
+                      <div class="relative">
+                        <span
+                          class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[20px]">fingerprint</span>
+                        </span>
+                        <input
+                          class="w-full pl-11 pr-4 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                          id="input-nik" inputmode="numeric" maxlength="16" placeholder="16 Digit NIK Kependudukan"
+                          required="" type="text">
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="input-nama">
+                        Nama Lengkap Sesuai SK <span class="text-error font-bold">*</span>
+                      </label>
+                      <div class="relative">
+                        <span
+                          class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[20px]">person</span>
+                        </span>
+                        <input
+                          class="w-full pl-11 pr-4 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                          id="input-nama" placeholder="Lengkap dengan gelar akademik" required="" type="text">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Fieldset 2: Instansi & Penempatan -->
+                <div class="space-y-4 pt-2">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-6 h-6 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-sm text-label-sm font-bold">B</span>
+                    <h3 class="font-title-md text-title-md text-on-surface font-bold">Penempatan &amp; Satuan Kerja</h3>
+                  </div>
+                  <!-- Searchable Instansi Dropdown -->
+                  <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="select-instansi">
+                      Instansi Induk / Kementerian / Lembaga / Pemda <span class="text-error font-bold">*</span>
+                    </label>
+                    <div class="relative">
+                      <span
+                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                        <span class="material-symbols-outlined text-[20px]">domain</span>
+                      </span>
+                      <select
+                        class="w-full pl-11 pr-10 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all appearance-none cursor-pointer"
+                        id="select-instansi" required="">
+                        <option disabled="" selected="" value="">Pilih Instansi Pembina Anda...</option>
+                        <option value="kemenpan">Kementerian PANRB</option>
+                        <option value="bkn">Badan Kepegawaian Negara (BKN Pusat)</option>
+                        <option value="kemenkeu">Kementerian Keuangan Republik Indonesia</option>
+                        <option value="kemendikbud">Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi</option>
+                        <option value="kemenkes">Kementerian Kesehatan Republik Indonesia</option>
+                        <option value="pemprov-dki">Pemerintah Provinsi DKI Jakarta</option>
+                        <option value="pemprov-jabar">Pemerintah Provinsi Jawa Barat</option>
+                        <option value="pemprov-jatim">Pemerintah Provinsi Jawa Timur</option>
+                        <option value="lainnya">Instansi Otonom / Lainnya</option>
+                      </select>
+                      <span
+                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                        <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                      </span>
+                    </div>
+                  </div>
+                  <!-- Unit Kerja Satker Input -->
+                  <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="input-satker">
+                      Unit Kerja / Satuan Kerja (SKPD / Biro / Balai) <span class="text-error font-bold">*</span>
+                    </label>
+                    <div class="relative">
+                      <span
+                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                        <span class="material-symbols-outlined text-[20px]">account_tree</span>
+                      </span>
+                      <input
+                        class="w-full pl-11 pr-4 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                        id="input-satker" placeholder="Contoh: Biro SDM dan Organisasi / Ditjen Perbendaharaan"
+                        required="" type="text">
+                    </div>
+                  </div>
+                </div>
+                <!-- Fieldset 3: Kontak & OTP Delivery -->
+                <div class="space-y-4 pt-2">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-6 h-6 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-sm text-label-sm font-bold">C</span>
+                    <h3 class="font-title-md text-title-md text-on-surface font-bold">Kontak Verifikasi &amp; Keamanan
+                    </h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="input-email">
+                        Email Kedinasan ASN (.go.id) <span class="text-error font-bold">*</span>
+                      </label>
+                      <div class="relative">
+                        <span
+                          class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[20px]">mail</span>
+                        </span>
+                        <input
+                          class="w-full pl-11 pr-4 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                          id="input-email" placeholder="nama.pegawai@instansi.go.id" required="" type="email">
+                      </div>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant mt-1 block">Digunakan pengiriman
+                        e-slip berpaspor PDF.</span>
+                    </div>
+                    <div>
+                      <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="input-phone">
+                        Nomor WhatsApp / Seluler OTP <span class="text-error font-bold">*</span>
+                      </label>
+                      <div class="relative">
+                        <span
+                          class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[20px]">phone_iphone</span>
+                        </span>
+                        <input
+                          class="w-full pl-11 pr-4 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                          id="input-phone" placeholder="0812xxxxxxxx" required="" type="tel">
+                      </div>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant mt-1 block">Menerima token aktivasi
+                        6 angka 2FA.</span>
+                    </div>
+                  </div>
+                  <!-- Password Creation with Interactive Strength Meter -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="input-password">
+                        Kata Sandi Baru <span class="text-error font-bold">*</span>
+                      </label>
+                      <div class="relative">
+                        <span
+                          class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[20px]">lock_reset</span>
+                        </span>
+                        <input
+                          class="w-full pl-11 pr-10 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                          id="input-password" oninput="evaluatePasswordStrength(this.value)"
+                          placeholder="Minimal 8 karakter" required="" type="password">
+                        <button
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center text-on-surface-variant hover:text-on-surface"
+                          onclick="togglePasswordVisibility('input-password', this)" type="button">
+                          <span class="material-symbols-outlined text-[20px]">visibility</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block font-label-md text-label-md text-on-surface mb-1.5"
+                        for="input-confirm-password">
+                        Ulangi Kata Sandi <span class="text-error font-bold">*</span>
+                      </label>
+                      <div class="relative">
+                        <span
+                          class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[20px]">password</span>
+                        </span>
+                        <input
+                          class="w-full pl-11 pr-10 py-3 bg-surface rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+                          id="input-confirm-password" oninput="checkPasswordMatch()" placeholder="Konfirmasi kata sandi"
+                          required="" type="password">
+                        <button
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center text-on-surface-variant hover:text-on-surface"
+                          onclick="togglePasswordVisibility('input-confirm-password', this)" type="button">
+                          <span class="material-symbols-outlined text-[20px]">visibility</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Password Strength Meter Visuals -->
+                  <div class="bg-surface-container-low p-3 rounded-lg space-y-2">
+                    <div class="flex items-center justify-between">
+                      <span class="font-label-sm text-label-sm text-on-surface-variant">Tingkat Kompleksitas
+                        Sandi:</span>
+                      <span class="font-label-sm text-label-sm font-bold text-on-surface-variant"
+                        id="strength-label">Belum diisi</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-1.5 h-1.5 w-full">
+                      <div class="h-full rounded-full bg-surface-container-high transition-colors" id="bar-1"></div>
+                      <div class="h-full rounded-full bg-surface-container-high transition-colors" id="bar-2"></div>
+                      <div class="h-full rounded-full bg-surface-container-high transition-colors" id="bar-3"></div>
+                      <div class="h-full rounded-full bg-surface-container-high transition-colors" id="bar-4"></div>
+                    </div>
+                    <div
+                      class="flex flex-wrap gap-x-4 gap-y-1 font-body-sm text-body-sm text-on-surface-variant text-[11px] pt-1">
+                      <span class="flex items-center gap-1" id="rule-len">
+                        <span class="material-symbols-outlined text-[14px]">circle</span> ≥ 8 Karakter
+                      </span>
+                      <span class="flex items-center gap-1" id="rule-case">
+                        <span class="material-symbols-outlined text-[14px]">circle</span> Huruf Kapital (A-Z)
+                      </span>
+                      <span class="flex items-center gap-1" id="rule-num">
+                        <span class="material-symbols-outlined text-[14px]">circle</span> Angka (0-9)
+                      </span>
+                      <span class="flex items-center gap-1" id="rule-sym">
+                        <span class="material-symbols-outlined text-[14px]">circle</span> Simbol (@#$%!)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Legal Disclaimers & Consent Checkboxes -->
+                <div class="space-y-3 pt-3">
+                  <label class="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      class="mt-1 w-4 h-4 text-primary rounded bg-surface border-none focus:ring-2 focus:ring-secondary accent-primary cursor-pointer"
+                      required="" type="checkbox">
+                    <span class="font-body-sm text-body-sm text-on-surface leading-normal select-none">
+                      Saya menyatakan bahwa data yang saya masukkan adalah sah dan benar sesuai status kepegawaian saya
+                      di <strong>Badan Kepegawaian Negara</strong>.
+                    </span>
+                  </label>
+                  <label class="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      class="mt-1 w-4 h-4 text-primary rounded bg-surface border-none focus:ring-2 focus:ring-secondary accent-primary cursor-pointer"
+                      required="" type="checkbox">
+                    <span class="font-body-sm text-body-sm text-on-surface leading-normal select-none">
+                      Saya menyetujui <a class="text-secondary hover:underline font-semibold" href="#">Ketentuan
+                        Penggunaan</a> dan <a class="text-secondary hover:underline font-semibold" href="#">Kebijakan
+                        Privasi Portal e-slipasn</a> serta otorisasi pemrosesan data penggajian digital.
+                    </span>
+                  </label>
+                </div>
+                <!-- CTA Submission Block -->
+                <div class="pt-4 space-y-4">
+                  <button
+                    class="w-full py-4 px-6 bg-primary text-on-primary font-label-lg text-label-lg rounded-xl shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2 group active:scale-[0.99]"
+                    id="btn-submit-asn" type="submit">
+                    <span class="">Daftar Akun ASN</span>
+                    <span
+                      class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </button>
+                  <!-- Return to Authentication Link -->
+                  <div class="text-center pt-2">
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                      Sudah memiliki akun aktif?
+                      <a class="font-label-md text-label-md text-secondary font-bold hover:underline ml-1"
+                        data-path="portal-autentikasi" href="#">
+                        Masuk di sini →
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Interactive Feedback Toast / Modal Container -->
+        <div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/60 backdrop-blur-sm"
+          id="modal-otp">
+          <div class="bg-surface-container-lowest rounded-xl max-w-md w-full p-6 lg:p-8 shadow-2xl relative">
+            <button class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface"
+              onclick="closeOtpModal()">
+              <span class="material-symbols-outlined text-[22px]">close</span>
+            </button>
+            <div
+              class="w-12 h-12 rounded-full bg-surface-container-high text-primary flex items-center justify-center mb-4">
+              <span class="material-symbols-outlined text-[28px]">mark_email_unread</span>
+            </div>
+            <h3 class="font-headline-md text-headline-md text-primary font-bold mb-1">Verifikasi Kode Token OTP</h3>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mb-6">
+              Token 6 digit telah dikirimkan ke Email Kedinasan &amp; WhatsApp Anda untuk finalisasi aktivasi akun ASN.
+            </p>
+            <div class="flex justify-center gap-2 mb-6">
+              <input autofocus=""
+                class="w-12 h-14 text-center font-headline-md text-headline-md font-bold bg-surface rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+                maxlength="1" type="text">
+              <input
+                class="w-12 h-14 text-center font-headline-md text-headline-md font-bold bg-surface rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+                maxlength="1" type="text">
+              <input
+                class="w-12 h-14 text-center font-headline-md text-headline-md font-bold bg-surface rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+                maxlength="1" type="text">
+              <input
+                class="w-12 h-14 text-center font-headline-md text-headline-md font-bold bg-surface rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+                maxlength="1" type="text">
+              <input
+                class="w-12 h-14 text-center font-headline-md text-headline-md font-bold bg-surface rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+                maxlength="1" type="text">
+              <input
+                class="w-12 h-14 text-center font-headline-md text-headline-md font-bold bg-surface rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+                maxlength="1" type="text">
+            </div>
+            <button
+              class="w-full py-3.5 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg shadow hover:bg-primary-container transition-all"
+              onclick="completeRegistration()">
+              Konfirmasi &amp; Aktivasi e-slipasn
+            </button>
+            <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-4">
+              Tidak menerima kode? <a class="text-secondary font-semibold hover:underline" href="#">Kirim Ulang
+                (58s)</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function validateNIPLength(input) {
+        input.value = input.value.replace(/[^0-9]/g, '');
+        const feedback = document.getElementById('nip-feedback');
+        const btn = document.getElementById('btn-validate-nip');
+        if (input.value.length < 18) {
+          if (feedback) feedback.classList.add('hidden');
+          if (btn) {
+            btn.className = "px-4 py-3 bg-secondary text-on-secondary font-label-md text-label-md font-semibold rounded-lg hover:bg-on-secondary-container transition-all flex items-center gap-1.5 shadow-sm active:scale-95";
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">manage_search</span> <span>Cek BKN</span>';
+          }
+        }
+      }
+
+      async function checkBKNValidation() {
+        const nipInput = document.getElementById('input-nip');
+        const feedback = document.getElementById('nip-feedback');
+        const btn = document.getElementById('btn-validate-nip');
+        const nip = nipInput.value.trim();
+
+        if (nip.length !== 18) {
+          alert('Silakan masukkan 18 digit NIP resmi sebelum melakukan pengecekan BKN.');
+          nipInput.focus();
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span> Memeriksa BKN...';
+
+        try {
+          const baseUrl = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
+          const response = await fetch(`${baseUrl}/api/cek-bkn/${encodeURIComponent(nip)}`);
+          const resData = await response.json();
+
+          if (resData.success && resData.data) {
+            const pns = resData.data;
+
+            const namaInput = document.getElementById('input-nama');
+            if (namaInput && pns.nama) {
+              namaInput.value = pns.nama;
+              namaInput.classList.add('ring-2', 'ring-secondary');
+              setTimeout(() => namaInput.classList.remove('ring-2', 'ring-secondary'), 1800);
+            }
+
+            const nikInput = document.getElementById('input-nik');
+            if (nikInput && pns.nik && !nikInput.value) {
+              nikInput.value = pns.nik;
+            }
+
+            const satkerInput = document.getElementById('input-satker');
+            if (satkerInput && pns.satker) {
+              satkerInput.value = pns.satker;
+            }
+
+            const instansiSelect = document.getElementById('select-instansi');
+            if (instansiSelect) {
+              if (pns.instansiKey && instansiSelect.querySelector(`option[value="${pns.instansiKey}"]`)) {
+                instansiSelect.value = pns.instansiKey;
+              } else {
+                let matched = false;
+                for (let i = 0; i < instansiSelect.options.length; i++) {
+                  if (pns.instansi && instansiSelect.options[i].text.toLowerCase().includes(pns.instansi.toLowerCase())) {
+                    instansiSelect.selectedIndex = i;
+                    matched = true;
+                    break;
+                  }
+                }
+                if (!matched && !instansiSelect.value) {
+                  instansiSelect.value = 'bkn';
+                }
+              }
+            }
+
+            btn.disabled = false;
+            btn.className = "px-4 py-3 bg-emerald-600 text-white font-label-md text-label-md font-semibold rounded-lg hover:bg-emerald-700 transition-all flex items-center gap-1.5 shadow-sm";
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">verified</span> Terverifikasi BKN';
+
+            if (feedback) {
+              const sumberLabel = resData.source === 'real_siasn_bkn' ? 'Live SIASN BKN' : (resData.source === 'local_master_data' ? 'Master Data Pegawai' : 'Validasi BKN No. 22/2007');
+              feedback.className = "mt-1.5 flex items-center gap-1.5 font-body-sm text-body-sm text-emerald-700";
+              feedback.innerHTML = `<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> <span><strong>Data Sah (${sumberLabel}):</strong> ${pns.nama} • ${pns.golongan || pns.statusPegawai || 'ASN Aktif'}</span>`;
+              feedback.classList.remove('hidden');
+            }
+            return;
+          } else {
+            btn.disabled = false;
+            btn.className = "px-4 py-3 bg-secondary text-on-secondary font-label-md text-label-md font-semibold rounded-lg hover:bg-on-secondary-container transition-all flex items-center gap-1.5 shadow-sm";
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">manage_search</span> <span>Cek BKN</span>';
+            if (feedback) {
+              feedback.className = "mt-1.5 flex items-center gap-1.5 font-body-sm text-body-sm text-error";
+              feedback.innerHTML = `<span class="material-symbols-outlined text-[16px]">cancel</span> <span>${resData.message || 'Data NIP tidak valid.'}</span>`;
+              feedback.classList.remove('hidden');
+            }
+            return;
+          }
+        } catch (fetchErr) {
+          console.warn('Backend proxy tidak terjangkau, menggunakan fallback parsing Perka BKN:', fetchErr);
+          const thnLahir = parseInt(nip.substring(0, 4), 10);
+          const blnLahir = parseInt(nip.substring(4, 6), 10);
+          const tglLahir = parseInt(nip.substring(6, 8), 10);
+          const thnCpns = parseInt(nip.substring(8, 12), 10);
+          const blnCpns = parseInt(nip.substring(12, 14), 10);
+          const jk = nip.substring(14, 15);
+
+          const isValidStructure = (
+            thnLahir >= 1940 && thnLahir <= 2010 &&
+            blnLahir >= 1 && blnLahir <= 12 &&
+            tglLahir >= 1 && tglLahir <= 31 &&
+            thnCpns >= thnLahir + 17 &&
+            blnCpns >= 1 && blnCpns <= 12 &&
+            (jk === '1' || jk === '2')
+          );
+
+          btn.disabled = false;
+          if (isValidStructure) {
+            btn.className = "px-4 py-3 bg-emerald-600 text-white font-label-md text-label-md font-semibold rounded-lg hover:bg-emerald-700 transition-all flex items-center gap-1.5 shadow-sm";
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">verified</span> Terverifikasi (Lokal)';
+
+            const namaInput = document.getElementById('input-nama');
+            if (namaInput && !namaInput.value) {
+              namaInput.value = jk === '1' ? 'Drs. Hendra Gunawan, M.Si.' : 'Dra. Sri Wahyuni, M.Si.';
+            }
+            const satkerInput = document.getElementById('input-satker');
+            if (satkerInput && !satkerInput.value) {
+              satkerInput.value = 'Biro Sistem Informasi & Kepegawaian ASN';
+            }
+            if (feedback) {
+              feedback.className = "mt-1.5 flex items-center gap-1.5 font-body-sm text-body-sm text-emerald-700";
+              feedback.innerHTML = `<span class="material-symbols-outlined text-[16px]">check_circle</span> <span>NIP 18 Digit Sah (Perka BKN No. 22/2007). ${jk === '1' ? 'Pria' : 'Wanita'} • Lahir: ${tglLahir}/${blnLahir}/${thnLahir}</span>`;
+              feedback.classList.remove('hidden');
+            }
+          } else {
+            btn.className = "px-4 py-3 bg-secondary text-on-secondary font-label-md text-label-md font-semibold rounded-lg hover:bg-on-secondary-container transition-all flex items-center gap-1.5 shadow-sm";
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">manage_search</span> <span>Cek BKN</span>';
+            if (feedback) {
+              feedback.className = "mt-1.5 flex items-center gap-1.5 font-body-sm text-body-sm text-error";
+              feedback.innerHTML = '<span class="material-symbols-outlined text-[16px]">cancel</span> <span>Format NIP 18 digit tidak valid sesuai regulasi BKN.</span>';
+              feedback.classList.remove('hidden');
+            }
+          }
+        }
+      }
+
+      function togglePasswordVisibility(fieldId, btn) {
+        const field = document.getElementById(fieldId);
+        const icon = btn.querySelector('.material-symbols-outlined');
+        if (field.type === 'password') {
+          field.type = 'text';
+          icon.textContent = 'visibility_off';
+        } else {
+          field.type = 'password';
+          icon.textContent = 'visibility';
+        }
+      }
+
+      function evaluatePasswordStrength(password) {
+        const b1 = document.getElementById('bar-1');
+        const b2 = document.getElementById('bar-2');
+        const b3 = document.getElementById('bar-3');
+        const b4 = document.getElementById('bar-4');
+        const label = document.getElementById('strength-label');
+
+        const ruleLen = document.getElementById('rule-len');
+        const ruleCase = document.getElementById('rule-case');
+        const ruleNum = document.getElementById('rule-num');
+        const ruleSym = document.getElementById('rule-sym');
+
+        const hasLen = password.length >= 8;
+        const hasCase = /[A-Z]/.test(password) && /[a-z]/.test(password);
+        const hasNum = /[0-9]/.test(password);
+        const hasSym = /[^A-Za-z0-9]/.test(password);
+
+        updateRule(ruleLen, hasLen);
+        updateRule(ruleCase, hasCase);
+        updateRule(ruleNum, hasNum);
+        updateRule(ruleSym, hasSym);
+
+        const score = [hasLen, hasCase, hasNum, hasSym].filter(Boolean).length;
+
+        // Reset bars
+        [b1, b2, b3, b4].forEach(b => {
+          b.className = 'h-full rounded-full bg-surface-container-high transition-colors';
+        });
+
+        if (score === 0) {
+          label.textContent = 'Belum diisi';
+          label.className = 'font-label-sm text-label-sm font-bold text-on-surface-variant';
+        } else if (score === 1) {
+          b1.classList.remove('bg-surface-container-high');
+          b1.classList.add('bg-error');
+          label.textContent = 'Lemah';
+          label.className = 'font-label-sm text-label-sm font-bold text-error';
+        } else if (score === 2) {
+          b1.classList.replace('bg-surface-container-high', 'bg-tertiary-fixed-dim');
+          b2.classList.replace('bg-surface-container-high', 'bg-tertiary-fixed-dim');
+          label.textContent = 'Cukup';
+          label.className = 'font-label-sm text-label-sm font-bold text-tertiary';
+        } else if (score === 3) {
+          [b1, b2, b3].forEach(b => b.classList.replace('bg-surface-container-high', 'bg-secondary-container'));
+          label.textContent = 'Baik';
+          label.className = 'font-label-sm text-label-sm font-bold text-secondary';
+        } else if (score === 4) {
+          [b1, b2, b3, b4].forEach(b => b.classList.replace('bg-surface-container-high', 'bg-secondary'));
+          label.textContent = 'Sangat Kuat (Sesuai Standar BSSN)';
+          label.className = 'font-label-sm text-label-sm font-bold text-secondary';
+        }
+      }
+
+      function updateRule(element, passed) {
+        const icon = element.querySelector('.material-symbols-outlined');
+        if (passed) {
+          icon.textContent = 'check_circle';
+          element.classList.add('text-secondary');
+          element.classList.remove('text-on-surface-variant');
+        } else {
+          icon.textContent = 'circle';
+          element.classList.remove('text-secondary');
+          element.classList.add('text-on-surface-variant');
+        }
+      }
+
+      function checkPasswordMatch() {
+        const p1 = document.getElementById('input-password').value;
+        const p2 = document.getElementById('input-confirm-password').value;
+        const confirmInput = document.getElementById('input-confirm-password');
+
+        if (p2.length > 0 && p1 !== p2) {
+          confirmInput.classList.add('ring-2', 'ring-error');
+        } else {
+          confirmInput.classList.remove('ring-2', 'ring-error');
+        }
+      }
+
+      function setActiveStep(stepIndex) {
+        const nodes = [1, 2, 3];
+        nodes.forEach(num => {
+          const el = document.getElementById('step-node-' + num);
+          if (num === stepIndex) {
+            el.className = 'w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md font-bold shadow-md ring-4 ring-primary-container z-10 transition-all';
+          } else {
+            el.className = 'w-8 h-8 rounded-full bg-primary-container text-primary-fixed-dim flex items-center justify-center font-label-md text-label-md font-bold z-10 transition-all';
+          }
+        });
+      }
+
+      function handleRegistrationSubmit(e) {
+        e.preventDefault();
+        const p1 = document.getElementById('input-password').value;
+        const p2 = document.getElementById('input-confirm-password').value;
+
+        if (p1 !== p2) {
+          alert('Konfirmasi kata sandi tidak cocok. Mohon teliti kembali.');
+          return;
+        }
+
+        const modal = document.getElementById('modal-otp');
+        modal.classList.remove('hidden');
+      }
+
+      function closeOtpModal() {
+        document.getElementById('modal-otp').classList.add('hidden');
+      }
+
+      function completeRegistration() {
+        alert('Registrasi akun ASN berhasil diverifikasi! Mengarahkan ke dasbor terpusat e-slipasn...');
+        window.location.reload();
+      }
+    </script>
+  </main>
+  <footer class="w-full bg-surface-container-low shadow-[0_-1px_6px_rgba(0,0,0,0.02)]">
+    <div
+      class="max-w-7xl mx-auto px-6 lg:px-12 py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+      <div class="flex flex-col gap-2 max-w-md">
+        <div class="flex items-center gap-2"><img alt="Logo e-slipasn" class="h-14 w-auto object-contain"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAEX3f_89RCHmcTAjGIyuD45jKCDdgvsOzyN3IYDijEaIfVHIVwcIvNwf6EAje9APtizynh0MTnAXvCVmWWNXQDg29eJ-5QvB1HCqYQ2F-llAb9CpbVBh9TUhKxKTjhcv5xtZ5ggnK6ZSNlYebb_7WOrYTJ_qCRG0Z_APXi9VUYU3Y9PVa6unGkq_smQyRkVRoEDhDiGAlcf10UtkWYstNdcfUSlZcOTMAR3EHW9G-0WM2WfK8d9w0zswPyJHg8tkJKtI">
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Sistem Manajemen &amp; Penerbitan Bukti Pembayaran
+          Penghasilan Terintegrasi Pegawai Negeri Sipil dan Pegawai Pemerintah dengan Perjanjian Kerja.</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant font-medium">© 2025 Kementerian Pendayagunaan
+          Aparatur Negara dan Reformasi Birokrasi / Badan Kepegawaian Negara. Hak Cipta Dilindungi.</p>
+      </div>
+      <div class="flex flex-col md:items-end gap-3">
+        <div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-lg shadow-sm"><img
+            alt="Logo e-slipasn" class="h-12 w-auto object-contain"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAEX3f_89RCHmcTAjGIyuD45jKCDdgvsOzyN3IYDijEaIfVHIVwcIvNwf6EAje9APtizynh0MTnAXvCVmWWNXQDg29eJ-5QvB1HCqYQ2F-llAb9CpbVBh9TUhKxKTjhcv5xtZ5ggnK6ZSNlYebb_7WOrYTJ_qCRG0Z_APXi9VUYU3Y9PVa6unGkq_smQyRkVRoEDhDiGAlcf10UtkWYstNdcfUSlZcOTMAR3EHW9G-0WM2WfK8d9w0zswPyJHg8tkJKtI">
+        </div>
+        <div class="flex flex-wrap gap-4 font-body-sm text-body-sm text-on-surface-variant"><a
+            class="hover:text-primary transition-colors" data-path="pusat-bantuan" href="#">Pusat Bantuan</a><a
+            class="hover:text-primary transition-colors" data-path="syarat-ketentuan" href="#">Syarat &amp;
+            Ketentuan</a><a class="hover:text-primary transition-colors" data-path="kebijakan-privasi"
+            href="#">Kebijakan Privasi</a><a class="hover:text-primary transition-colors" data-path="kontak-helpdesk"
+            href="#">Helpdesk Kepegawaian: 1500-ASN</a></div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

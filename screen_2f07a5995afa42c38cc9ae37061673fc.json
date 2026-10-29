@@ -1,0 +1,366 @@
+﻿{
+    "screenshot":  {
+                       "name":  "projects/13572769455383463608/files/12271756138109890971",
+                       "downloadUrl":  "https://lh3.googleusercontent.com/aida/AEtjO1V9XISoxq_o4_KmY8DBcr5iZEjNOpvgzQqV4Ny3ZwWvSXH9gGBiQXdRLFB5VI7lS4aLf0rMsAYAPMl6CKC7Hre9UvMlOfrgF4v_Eef4OdQWV0EHh7URdv3umHPu4x_SdILxSqww5offXewSLWhy2oshp7XVzR1EHEr8WPPXjPF-HaHzNttGtWymBXPmuW_1RBO4xM5UuLja95HW5f2VVY-_5MJew8RZ3aMBJVVmgG_-LThivHUKKO0imHqE"
+                   },
+    "htmlCode":  {
+                     "name":  "projects/13572769455383463608/files/1311424324533286348",
+                     "downloadUrl":  "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1ZTMxOTU1NmE4OGIwOTI1Yzc4YTg5MDgyNzVjEgsSBxDo3vOrkR8YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzU3Mjc2OTQ1NTM4MzQ2MzYwOA\u0026filename=\u0026opi=89354086",
+                     "mimeType":  "text/html"
+                 },
+    "id":  "2f07a5995afa42c38cc9ae37061673fc",
+    "generatedBy":  "figaro_agent",
+    "width":  "2560",
+    "height":  "2802",
+    "title":  "Portal Masuk ASN - e-slipasn",
+    "prompt":  "Halaman Login Resmi e-slipasn (Sistem Slip Gaji Elektronik ASN).\nLayout Desktop 2 Kolom yang megah dan seimbang:\n1. Kolom Kiri: Showcase visual portal e-slipasn dengan gradien navy-biru formal (#0F2F57 ke #0284C7), badge sertifikasi TTE (Tanda Tangan Elektronik BSrE/BSSN), ringkasan fitur utama:\n   - Akses Slip Gaji Bulanan \u0026 THR/Gaji ke-13 secara realtime\n   - Bukti Potong Pajak PPh 21 (Form 1721-A2) terintegrasi\n   - Keamanan Enkripsi Dokumen \u0026 Verifikasi QR-Code Resmi\n   - Testimoni singkat ASN atau kutipan integritas integritas ASN BerAKHLAK.\n   - Kartu pratinjau mini dokumen slip gaji berstempel sah elektronik.\n\n2. Kolom Kanan: Card formulir Login yang sangat elegan, bersih, dan fungsional:\n   - Header card: Salam hangat \"Selamat Datang di Portal e-slipasn\", subjudul \"Masuk menggunakan Nomor Induk Pegawai (NIP) dan kata sandi Anda\".\n   - Pilihan metode login: Tab toggle \"NIP \u0026 Kata Sandi\" dan \"Login SSO ASN Digital / MyASN\".\n   - Input Field NIP (18 Digit Angka) dengan format helper \u0027Contoh: 19850312 201001 1 002\u0027 dan ikon kartu identitas.\n   - Input Field Kata Sandi dengan toggle tampil/sembunyikan password dan indikator caps lock.\n   - Baris pendukung: Checkbox \"Ingat NIP di perangkat ini\" dan tautan \"Lupa Kata Sandi?\" serta \"Panduan Lupa Akun\".\n   - Security CAPTCHA / Verifikasi Keamanan aritmatika sederhana ramah ASN.\n   - Tombol Primer CTA: \"Masuk ke Sistem\" (warna navy gradien biru tegas, hover state, ikon panah/kunci).\n   - Opsi SSO alternatif: Tombol login integrasi satu pintu \"Masuk dengan Portal Satu Data ASN / BKN\".\n   - Footer Card Auth: \"Belum memiliki akun terdaftar? Daftar Akun ASN Baru\" yang mengarahkan ke halaman registrasi, serta catatan disclaimer keamanan data kepegawaian.",
+    "name":  "projects/13572769455383463608/screens/2f07a5995afa42c38cc9ae37061673fc",
+    "theme":  {
+                  "colorMode":  "LIGHT",
+                  "font":  "PLUS_JAKARTA_SANS",
+                  "roundness":  "ROUND_EIGHT",
+                  "customColor":  "#0f2f57",
+                  "headlineFont":  "PLUS_JAKARTA_SANS",
+                  "bodyFont":  "PLUS_JAKARTA_SANS",
+                  "labelFont":  "PLUS_JAKARTA_SANS",
+                  "namedColors":  {
+                                      "surface_container_lowest":  "#ffffff",
+                                      "secondary_container":  "#5bb8fe",
+                                      "inverse_primary":  "#acc8f8",
+                                      "outline_variant":  "#c4c6cf",
+                                      "on_tertiary_fixed":  "#2f1500",
+                                      "on_secondary_container":  "#00476e",
+                                      "on_error_container":  "#93000a",
+                                      "on_tertiary":  "#ffffff",
+                                      "on_primary_container":  "#7c98c6",
+                                      "on_error":  "#ffffff",
+                                      "surface_container_high":  "#dde9ff",
+                                      "surface_container":  "#e6eeff",
+                                      "on_secondary_fixed_variant":  "#004b73",
+                                      "primary":  "#001a3a",
+                                      "surface":  "#f8f9ff",
+                                      "tertiary_container":  "#4b2500",
+                                      "on_primary_fixed":  "#001b3c",
+                                      "surface_container_low":  "#eff4ff",
+                                      "secondary_fixed_dim":  "#93ccff",
+                                      "error_container":  "#ffdad6",
+                                      "error":  "#ba1a1a",
+                                      "outline":  "#74777f",
+                                      "on_secondary_fixed":  "#001d31",
+                                      "on_surface":  "#0d1c2f",
+                                      "surface_container_highest":  "#d5e3fd",
+                                      "inverse_on_surface":  "#ebf1ff",
+                                      "background":  "#f8f9ff",
+                                      "tertiary_fixed":  "#ffdcc3",
+                                      "on_secondary":  "#ffffff",
+                                      "surface_tint":  "#445f8a",
+                                      "on_surface_variant":  "#43474e",
+                                      "surface_variant":  "#d5e3fd",
+                                      "on_background":  "#0d1c2f",
+                                      "primary_fixed":  "#d5e3ff",
+                                      "surface_dim":  "#ccdbf4",
+                                      "tertiary":  "#2d1400",
+                                      "on_tertiary_fixed_variant":  "#6e3900",
+                                      "on_tertiary_container":  "#e17d11",
+                                      "secondary_fixed":  "#cce5ff",
+                                      "on_primary_fixed_variant":  "#2b4770",
+                                      "primary_container":  "#0f2f57",
+                                      "secondary":  "#006398",
+                                      "tertiary_fixed_dim":  "#ffb77d",
+                                      "primary_fixed_dim":  "#acc8f8",
+                                      "inverse_surface":  "#233144",
+                                      "surface_bright":  "#f8f9ff",
+                                      "on_primary":  "#ffffff"
+                                  },
+                  "colorVariant":  "FIDELITY",
+                  "overridePrimaryColor":  "#0f2f57",
+                  "overrideSecondaryColor":  "#0284c7",
+                  "overrideTertiaryColor":  "#d97706",
+                  "overrideNeutralColor":  "#334155",
+                  "spacingScale":  2,
+                  "typography":  {
+                                     "title-lg":  {
+                                                      "fontFamily":  "Plus Jakarta Sans",
+                                                      "fontSize":  "18px",
+                                                      "fontWeight":  "600",
+                                                      "lineHeight":  "26px"
+                                                  },
+                                     "label-sm":  {
+                                                      "fontFamily":  "Plus Jakarta Sans",
+                                                      "fontSize":  "11px",
+                                                      "fontWeight":  "700",
+                                                      "lineHeight":  "14px",
+                                                      "letterSpacing":  "0.04em"
+                                                  },
+                                     "label-md":  {
+                                                      "fontFamily":  "Plus Jakarta Sans",
+                                                      "fontSize":  "12px",
+                                                      "fontWeight":  "600",
+                                                      "lineHeight":  "16px",
+                                                      "letterSpacing":  "0.02em"
+                                                  },
+                                     "headline-xl":  {
+                                                         "fontFamily":  "Plus Jakarta Sans",
+                                                         "fontSize":  "36px",
+                                                         "fontWeight":  "700",
+                                                         "lineHeight":  "44px",
+                                                         "letterSpacing":  "-0.02em"
+                                                     },
+                                     "headline-lg":  {
+                                                         "fontFamily":  "Plus Jakarta Sans",
+                                                         "fontSize":  "28px",
+                                                         "fontWeight":  "600",
+                                                         "lineHeight":  "36px",
+                                                         "letterSpacing":  "-0.01em"
+                                                     },
+                                     "headline-lg-mobile":  {
+                                                                "fontFamily":  "Plus Jakarta Sans",
+                                                                "fontSize":  "22px",
+                                                                "fontWeight":  "600",
+                                                                "lineHeight":  "30px",
+                                                                "letterSpacing":  "-0.01em"
+                                                            },
+                                     "headline-xl-mobile":  {
+                                                                "fontFamily":  "Plus Jakarta Sans",
+                                                                "fontSize":  "28px",
+                                                                "fontWeight":  "700",
+                                                                "lineHeight":  "36px",
+                                                                "letterSpacing":  "-0.01em"
+                                                            },
+                                     "body-md":  {
+                                                     "fontFamily":  "Plus Jakarta Sans",
+                                                     "fontSize":  "14px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "20px"
+                                                 },
+                                     "headline-md":  {
+                                                         "fontFamily":  "Plus Jakarta Sans",
+                                                         "fontSize":  "20px",
+                                                         "fontWeight":  "600",
+                                                         "lineHeight":  "28px",
+                                                         "letterSpacing":  "-0.005em"
+                                                     },
+                                     "label-lg":  {
+                                                      "fontFamily":  "Plus Jakarta Sans",
+                                                      "fontSize":  "14px",
+                                                      "fontWeight":  "600",
+                                                      "lineHeight":  "20px",
+                                                      "letterSpacing":  "0.01em"
+                                                  },
+                                     "title-md":  {
+                                                      "fontFamily":  "Plus Jakarta Sans",
+                                                      "fontSize":  "16px",
+                                                      "fontWeight":  "600",
+                                                      "lineHeight":  "24px"
+                                                  },
+                                     "body-lg":  {
+                                                     "fontFamily":  "Plus Jakarta Sans",
+                                                     "fontSize":  "16px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "24px"
+                                                 },
+                                     "body-sm":  {
+                                                     "fontFamily":  "Plus Jakarta Sans",
+                                                     "fontSize":  "12px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "18px"
+                                                 }
+                                 },
+                  "spacing":  {
+                                  "space-xs":  "0.25rem",
+                                  "space-md":  "1rem",
+                                  "gutter-mobile":  "1rem",
+                                  "margin":  "2rem",
+                                  "margin-mobile":  "1rem",
+                                  "space-xl":  "2.5rem",
+                                  "gutter":  "1.5rem",
+                                  "space-lg":  "1.5rem",
+                                  "space-sm":  "0.5rem"
+                              },
+                  "headlineFontFamily":  "Plus Jakarta Sans",
+                  "bodyFontFamily":  "Plus Jakarta Sans",
+                  "labelFontFamily":  "Plus Jakarta Sans"
+              },
+    "deviceType":  "DESKTOP",
+    "screenType":  "DESIGN",
+    "screenMetadata":  {
+                           "agentType":  "PRO_AGENT",
+                           "status":  "COMPLETE",
+                           "displayMode":  "HTML"
+                       },
+    "designSystem":  {
+                         "name":  "assets/4d6f08e46b0c4d39af80727a079e4334",
+                         "designSystem":  {
+                                              "displayName":  "Sovereign Civic",
+                                              "styleGuidelines":  "## Brand \u0026 Style\n\nThis design system establishes a digital standard for Indonesian civil service compensation, financial reporting, and payroll verification. The visual aesthetic fuses institutional authority with modern, human-centered civic technology. It rejects the archaic, dense, and intimidating administrative patterns of legacy bureaucratic software in favor of an atmosphere that conveys accuracy, transparency, and personal trust.\n\nThe visual style is **Corporate / Modern** elevated by structured editorial layout principles:\n- **Atmosphere:** Rigorous, dignified, reassuring, and impeccably organized.\n- **Visual Weight:** Solid deep navy foundations establish institutional sovereignty, accented by vibrant cyan-teal data paths and subtle sovereign gold touches for official state markers, civil service ranks (Golongan/Eselon), and digital signature seals.\n- **Tone:** Professional without feeling punitive; friendly and frictionless without compromising legal stature.\n\n## Layout \u0026 Spacing\n\nThe layout is built on an **8pt progressive rhythm** using a fluid responsive grid:\n\n- **Desktop (12 Columns, max-width 1280px):** 24px gutters and 32px canvas margins. Dual-pane balance ensures payroll breakdown cards maintain a 7:5 ratio against digital signatures, institutional verification logs, and historical download drawers.\n- **Tablet (8 Columns, 768px – 1023px):** 16px gutters and 24px margins. Sidebar navigation collapses to a high-density utility bar or drawer; breakdowns re-stack sequentially.\n- **Mobile (4 Columns, \u003c768px):** 16px gutters and 16px margins. Financial ledger tables transform into clean, stacked accordion units with primary take-home pay pinned as a sticky top summary.\n\n## Elevation \u0026 Depth\n\nVisual hierarchy relies on **ambient shadows and crisp hairline borders** rather than stark skeuomorphic drop shadows, ensuring documents appear tangible yet modern:\n\n- **Base Layer (Canvas):** `#F8FAFC` flat structural plane.\n- **Layer 1 (Card \u0026 Containers):** `#FFFFFF` surface bounded by a subtle `1px solid #E2E8F0` border and an ambient, low-contrast shadow: `0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03)`.\n- **Layer 2 (Authentication Cards, Modals, Action Panels):** Raised elevation with an extended, soft blue-slate shadow: `0 10px 25px -5px rgba(15, 47, 87, 0.08), 0 8px 10px -6px rgba(15, 47, 87, 0.04)`, bounded by `#E2E8F0`.\n- **Layer 3 (Floating Toolbars \u0026 Verification Flyouts):** `0 20px 25px -5px rgba(15, 47, 87, 0.12), 0 10px 10px -5px rgba(15, 47, 87, 0.04)`.\n\n## Components\n\n### Buttons\n- **Primary Institutional Button:** Solid `#0F2F57` background with `#FFFFFF` text. Focus state features a 3px ring in `#0284C7` (opacity 40%). Subtle lift and deepening to `#0A213D` on hover.\n- **Secondary Interactive Button:** Outlined with `1.5px solid #0284C7`, `#0284C7` text, and an ultra-subtle tint (`#0284C7` at 6% opacity) on hover.\n- **Tertiary / Action Link:** Flat style with `#0284C7` typography and an inline chevron.\n\n### Authentication Card (Portal Entry)\n- Centered 440px container on an ambient navy-to-slate tinted canvas.\n- Features dual-factor government single-sign-on (SSO ASN) integrations, NIP (Nomor Induk Pegawai) mask input formatting, and high-visibility state insignia placement at the top center.\n- Elevated with Layer 2 ambient shadow and hairline slate borders.\n\n### Payroll Ledger Cards \u0026 Line Items\n- **Earnings Group (Penghasilan):** Subtle soft emerald left accent border (`3px solid #059669`).\n- **Deductions Group (Potongan):** Subtle rose left accent border (`3px solid #E11D48`).\n- **Total Net Remuneration (Gaji Bersih Diterima):** Highlighted card container with a `#0F2F57` soft tint fill, bold typography, and an immediate download trigger for the certified PDF slip.\n\n### Badges, Chips \u0026 Official Seals\n- **Civil Service Grade (Golongan/Eselon):** Bordered pill tag with `#D97706` text, `#FEF3C7` background, and `1px solid #FCD34D`.\n- **Digital Authenticity Stamp (BSrE / TTE):** Pill badge containing a mini-QR icon, `#0284C7` background tint, and verified status typography.\n\n### Input Fields\n- Bounded by `1px solid #CBD5E1`, with inner padding `0.75rem 1rem`. Focus state triggers a crisp transition to `#0284C7` border with a 3px glow (`rgba(2, 132, 199, 0.15)`). Helper text and validation errors sit directly beneath in 12px Plus Jakarta Sans.",
+                                              "theme":  {
+                                                            "colorMode":  "LIGHT",
+                                                            "font":  "PLUS_JAKARTA_SANS",
+                                                            "roundness":  "ROUND_EIGHT",
+                                                            "customColor":  "#0f2f57",
+                                                            "headlineFont":  "PLUS_JAKARTA_SANS",
+                                                            "bodyFont":  "PLUS_JAKARTA_SANS",
+                                                            "labelFont":  "PLUS_JAKARTA_SANS",
+                                                            "namedColors":  {
+                                                                                "on_error_container":  "#93000a",
+                                                                                "on_tertiary_container":  "#e17d11",
+                                                                                "tertiary":  "#2d1400",
+                                                                                "surface_dim":  "#ccdbf4",
+                                                                                "surface":  "#f8f9ff",
+                                                                                "primary":  "#001a3a",
+                                                                                "on_tertiary_fixed_variant":  "#6e3900",
+                                                                                "outline":  "#74777f",
+                                                                                "on_primary_container":  "#7c98c6",
+                                                                                "surface_container":  "#e6eeff",
+                                                                                "secondary_container":  "#5bb8fe",
+                                                                                "surface_variant":  "#d5e3fd",
+                                                                                "surface_container_lowest":  "#ffffff",
+                                                                                "on_tertiary_fixed":  "#2f1500",
+                                                                                "surface_container_highest":  "#d5e3fd",
+                                                                                "on_secondary_fixed":  "#001d31",
+                                                                                "secondary_fixed_dim":  "#93ccff",
+                                                                                "on_secondary_fixed_variant":  "#004b73",
+                                                                                "tertiary_container":  "#4b2500",
+                                                                                "secondary_fixed":  "#cce5ff",
+                                                                                "inverse_surface":  "#233144",
+                                                                                "on_surface":  "#0d1c2f",
+                                                                                "on_error":  "#ffffff",
+                                                                                "primary_fixed":  "#d5e3ff",
+                                                                                "surface_container_low":  "#eff4ff",
+                                                                                "tertiary_fixed":  "#ffdcc3",
+                                                                                "inverse_primary":  "#acc8f8",
+                                                                                "primary_container":  "#0f2f57",
+                                                                                "primary_fixed_dim":  "#acc8f8",
+                                                                                "background":  "#f8f9ff",
+                                                                                "outline_variant":  "#c4c6cf",
+                                                                                "on_surface_variant":  "#43474e",
+                                                                                "surface_container_high":  "#dde9ff",
+                                                                                "error":  "#ba1a1a",
+                                                                                "inverse_on_surface":  "#ebf1ff",
+                                                                                "tertiary_fixed_dim":  "#ffb77d",
+                                                                                "on_secondary":  "#ffffff",
+                                                                                "on_primary_fixed_variant":  "#2b4770",
+                                                                                "on_secondary_container":  "#00476e",
+                                                                                "surface_bright":  "#f8f9ff",
+                                                                                "error_container":  "#ffdad6",
+                                                                                "on_tertiary":  "#ffffff",
+                                                                                "secondary":  "#006398",
+                                                                                "on_background":  "#0d1c2f",
+                                                                                "on_primary_fixed":  "#001b3c",
+                                                                                "surface_tint":  "#445f8a",
+                                                                                "on_primary":  "#ffffff"
+                                                                            },
+                                                            "designMd":  "---\nname: Sovereign Civic\ncolors:\n  surface: \u0027#f8f9ff\u0027\n  surface-dim: \u0027#ccdbf4\u0027\n  surface-bright: \u0027#f8f9ff\u0027\n  surface-container-lowest: \u0027#ffffff\u0027\n  surface-container-low: \u0027#eff4ff\u0027\n  surface-container: \u0027#e6eeff\u0027\n  surface-container-high: \u0027#dde9ff\u0027\n  surface-container-highest: \u0027#d5e3fd\u0027\n  on-surface: \u0027#0d1c2f\u0027\n  on-surface-variant: \u0027#43474e\u0027\n  inverse-surface: \u0027#233144\u0027\n  inverse-on-surface: \u0027#ebf1ff\u0027\n  outline: \u0027#74777f\u0027\n  outline-variant: \u0027#c4c6cf\u0027\n  surface-tint: \u0027#445f8a\u0027\n  primary: \u0027#001a3a\u0027\n  on-primary: \u0027#ffffff\u0027\n  primary-container: \u0027#0f2f57\u0027\n  on-primary-container: \u0027#7c98c6\u0027\n  inverse-primary: \u0027#acc8f8\u0027\n  secondary: \u0027#006398\u0027\n  on-secondary: \u0027#ffffff\u0027\n  secondary-container: \u0027#5bb8fe\u0027\n  on-secondary-container: \u0027#00476e\u0027\n  tertiary: \u0027#2d1400\u0027\n  on-tertiary: \u0027#ffffff\u0027\n  tertiary-container: \u0027#4b2500\u0027\n  on-tertiary-container: \u0027#e17d11\u0027\n  error: \u0027#ba1a1a\u0027\n  on-error: \u0027#ffffff\u0027\n  error-container: \u0027#ffdad6\u0027\n  on-error-container: \u0027#93000a\u0027\n  primary-fixed: \u0027#d5e3ff\u0027\n  primary-fixed-dim: \u0027#acc8f8\u0027\n  on-primary-fixed: \u0027#001b3c\u0027\n  on-primary-fixed-variant: \u0027#2b4770\u0027\n  secondary-fixed: \u0027#cce5ff\u0027\n  secondary-fixed-dim: \u0027#93ccff\u0027\n  on-secondary-fixed: \u0027#001d31\u0027\n  on-secondary-fixed-variant: \u0027#004b73\u0027\n  tertiary-fixed: \u0027#ffdcc3\u0027\n  tertiary-fixed-dim: \u0027#ffb77d\u0027\n  on-tertiary-fixed: \u0027#2f1500\u0027\n  on-tertiary-fixed-variant: \u0027#6e3900\u0027\n  background: \u0027#f8f9ff\u0027\n  on-background: \u0027#0d1c2f\u0027\n  surface-variant: \u0027#d5e3fd\u0027\ntypography:\n  headline-xl:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 36px\n    fontWeight: \u0027700\u0027\n    lineHeight: 44px\n    letterSpacing: -0.02em\n  headline-xl-mobile:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 28px\n    fontWeight: \u0027700\u0027\n    lineHeight: 36px\n    letterSpacing: -0.01em\n  headline-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 28px\n    fontWeight: \u0027600\u0027\n    lineHeight: 36px\n    letterSpacing: -0.01em\n  headline-lg-mobile:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 22px\n    fontWeight: \u0027600\u0027\n    lineHeight: 30px\n    letterSpacing: -0.01em\n  headline-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 20px\n    fontWeight: \u0027600\u0027\n    lineHeight: 28px\n    letterSpacing: -0.005em\n  title-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 18px\n    fontWeight: \u0027600\u0027\n    lineHeight: 26px\n  title-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 16px\n    fontWeight: \u0027600\u0027\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 16px\n    fontWeight: \u0027400\u0027\n    lineHeight: 24px\n  body-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 14px\n    fontWeight: \u0027400\u0027\n    lineHeight: 20px\n  body-sm:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 12px\n    fontWeight: \u0027400\u0027\n    lineHeight: 18px\n  label-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 14px\n    fontWeight: \u0027600\u0027\n    lineHeight: 20px\n    letterSpacing: 0.01em\n  label-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 12px\n    fontWeight: \u0027600\u0027\n    lineHeight: 16px\n    letterSpacing: 0.02em\n  label-sm:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 11px\n    fontWeight: \u0027700\u0027\n    lineHeight: 14px\n    letterSpacing: 0.04em\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  gutter: 1.5rem\n  gutter-mobile: 1rem\n  margin: 2rem\n  margin-mobile: 1rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2.5rem\n---\n\n## Brand \u0026 Style\n\nThis design system establishes a digital standard for Indonesian civil service compensation, financial reporting, and payroll verification. The visual aesthetic fuses institutional authority with modern, human-centered civic technology. It rejects the archaic, dense, and intimidating administrative patterns of legacy bureaucratic software in favor of an atmosphere that conveys accuracy, transparency, and personal trust.\n\nThe visual style is **Corporate / Modern** elevated by structured editorial layout principles:\n- **Atmosphere:** Rigorous, dignified, reassuring, and impeccably organized.\n- **Visual Weight:** Solid deep navy foundations establish institutional sovereignty, accented by vibrant cyan-teal data paths and subtle sovereign gold touches for official state markers, civil service ranks (Golongan/Eselon), and digital signature seals.\n- **Tone:** Professional without feeling punitive; friendly and frictionless without compromising legal stature.\n\n## Colors\n\nThe palette balances administrative authority with high legibility and operational clarity:\n\n- **Primary (`#0F2F57` - Sovereign Navy):** Anchors headers, primary navigation, institutional action buttons, and dominant visual markers. Represents state authority and permanence.\n- **Secondary (`#0284C7` - Modern Cyan/Teal):** Used for interactive triggers, data highlights, progressive status steps, dynamic chart elements, and active navigation indicators.\n- **Tertiary (`#D97706` - Sovereign Gold):** Reserved strictly for certified stamps, institutional seal borders, rank badges (Golongan ASN), verification chips, and legal audit indicators.\n- **Neutral (`#334155` - Slate):** Delivers sharp text readability across high-density financial data. Paired with background tints (`#F8FAFC` for canvas, `#FFFFFF` for data cards, `#E2E8F0` for hairline borders).\n- **Functional Semantics:**\n  - Net Pay / Additions (Tunjangan): Emerald `#059669`\n  - Deductions (Potongan/IWP/Taperum): Rose `#E11D48`\n  - Pending Verification: Amber `#D97706`\n\n## Typography\n\nThe design system uses **Plus Jakarta Sans** uniformly across all functional tiers. Rooted in clean geometric construction with humanist warmth, it satisfies both national accessibility standards and modern administrative interfaces.\n\n- **Numerics:** All monetary values (Gaji Pokok, Tunjangan Kinerja, Potongan Bersih) must render with tabular figures (`font-variant-numeric: tabular-nums`) to preserve optical column alignment across ledger tables and pay receipt statements.\n- **Hierarchy:** Primary headings strictly use weights 600 and 700 to present a grounded legal demeanor. Micro-labels and civil status tags leverage semibold and bold weights with subtle positive tracking for instantaneous scanning.\n\n## Layout \u0026 Spacing\n\nThe layout is built on an **8pt progressive rhythm** using a fluid responsive grid:\n\n- **Desktop (12 Columns, max-width 1280px):** 24px gutters and 32px canvas margins. Dual-pane balance ensures payroll breakdown cards maintain a 7:5 ratio against digital signatures, institutional verification logs, and historical download drawers.\n- **Tablet (8 Columns, 768px – 1023px):** 16px gutters and 24px margins. Sidebar navigation collapses to a high-density utility bar or drawer; breakdowns re-stack sequentially.\n- **Mobile (4 Columns, \u003c768px):** 16px gutters and 16px margins. Financial ledger tables transform into clean, stacked accordion units with primary take-home pay pinned as a sticky top summary.\n\n## Elevation \u0026 Depth\n\nVisual hierarchy relies on **ambient shadows and crisp hairline borders** rather than stark skeuomorphic drop shadows, ensuring documents appear tangible yet modern:\n\n- **Base Layer (Canvas):** `#F8FAFC` flat structural plane.\n- **Layer 1 (Card \u0026 Containers):** `#FFFFFF` surface bounded by a subtle `1px solid #E2E8F0` border and an ambient, low-contrast shadow: `0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03)`.\n- **Layer 2 (Authentication Cards, Modals, Action Panels):** Raised elevation with an extended, soft blue-slate shadow: `0 10px 25px -5px rgba(15, 47, 87, 0.08), 0 8px 10px -6px rgba(15, 47, 87, 0.04)`, bounded by `#E2E8F0`.\n- **Layer 3 (Floating Toolbars \u0026 Verification Flyouts):** `0 20px 25px -5px rgba(15, 47, 87, 0.12), 0 10px 10px -5px rgba(15, 47, 87, 0.04)`.\n\n## Shapes\n\nThe design system standardizes on a **Rounded (Level 2)** shape profile:\n- Primary interactive buttons, text inputs, and table card headers utilize an 8px (`0.5rem`) radius, balancing soft human usability with institutional crispness.\n- Master payroll cards, authentication containers, and modal wrappers utilize a 16px (`1rem`) corner radius.\n- Status chips, identity tags, and verification seals leverage fully rounded pill caps (`9999px`) to create clear visual contrast against structural grid cards.\n\n## Components\n\n### Buttons\n- **Primary Institutional Button:** Solid `#0F2F57` background with `#FFFFFF` text. Focus state features a 3px ring in `#0284C7` (opacity 40%). Subtle lift and deepening to `#0A213D` on hover.\n- **Secondary Interactive Button:** Outlined with `1.5px solid #0284C7`, `#0284C7` text, and an ultra-subtle tint (`#0284C7` at 6% opacity) on hover.\n- **Tertiary / Action Link:** Flat style with `#0284C7` typography and an inline chevron.\n\n### Authentication Card (Portal Entry)\n- Centered 440px container on an ambient navy-to-slate tinted canvas.\n- Features dual-factor government single-sign-on (SSO ASN) integrations, NIP (Nomor Induk Pegawai) mask input formatting, and high-visibility state insignia placement at the top center.\n- Elevated with Layer 2 ambient shadow and hairline slate borders.\n\n### Payroll Ledger Cards \u0026 Line Items\n- **Earnings Group (Penghasilan):** Subtle soft emerald left accent border (`3px solid #059669`).\n- **Deductions Group (Potongan):** Subtle rose left accent border (`3px solid #E11D48`).\n- **Total Net Remuneration (Gaji Bersih Diterima):** Highlighted card container with a `#0F2F57` soft tint fill, bold typography, and an immediate download trigger for the certified PDF slip.\n\n### Badges, Chips \u0026 Official Seals\n- **Civil Service Grade (Golongan/Eselon):** Bordered pill tag with `#D97706` text, `#FEF3C7` background, and `1px solid #FCD34D`.\n- **Digital Authenticity Stamp (BSrE / TTE):** Pill badge containing a mini-QR icon, `#0284C7` background tint, and verified status typography.\n\n### Input Fields\n- Bounded by `1px solid #CBD5E1`, with inner padding `0.75rem 1rem`. Focus state triggers a crisp transition to `#0284C7` border with a 3px glow (`rgba(2, 132, 199, 0.15)`). Helper text and validation errors sit directly beneath in 12px Plus Jakarta Sans.",
+                                                            "colorVariant":  "FIDELITY",
+                                                            "overridePrimaryColor":  "#0f2f57",
+                                                            "overrideSecondaryColor":  "#0284c7",
+                                                            "overrideTertiaryColor":  "#d97706",
+                                                            "overrideNeutralColor":  "#334155",
+                                                            "spacingScale":  2,
+                                                            "typography":  {
+                                                                               "title-md":  {
+                                                                                                "fontFamily":  "Plus Jakarta Sans",
+                                                                                                "fontSize":  "16px",
+                                                                                                "fontWeight":  "600",
+                                                                                                "lineHeight":  "24px"
+                                                                                            },
+                                                                               "body-lg":  {
+                                                                                               "fontFamily":  "Plus Jakarta Sans",
+                                                                                               "fontSize":  "16px",
+                                                                                               "fontWeight":  "400",
+                                                                                               "lineHeight":  "24px"
+                                                                                           },
+                                                                               "body-sm":  {
+                                                                                               "fontFamily":  "Plus Jakarta Sans",
+                                                                                               "fontSize":  "12px",
+                                                                                               "fontWeight":  "400",
+                                                                                               "lineHeight":  "18px"
+                                                                                           },
+                                                                               "label-lg":  {
+                                                                                                "fontFamily":  "Plus Jakarta Sans",
+                                                                                                "fontSize":  "14px",
+                                                                                                "fontWeight":  "600",
+                                                                                                "lineHeight":  "20px",
+                                                                                                "letterSpacing":  "0.01em"
+                                                                                            },
+                                                                               "body-md":  {
+                                                                                               "fontFamily":  "Plus Jakarta Sans",
+                                                                                               "fontSize":  "14px",
+                                                                                               "fontWeight":  "400",
+                                                                                               "lineHeight":  "20px"
+                                                                                           },
+                                                                               "headline-md":  {
+                                                                                                   "fontFamily":  "Plus Jakarta Sans",
+                                                                                                   "fontSize":  "20px",
+                                                                                                   "fontWeight":  "600",
+                                                                                                   "lineHeight":  "28px",
+                                                                                                   "letterSpacing":  "-0.005em"
+                                                                                               },
+                                                                               "headline-xl":  {
+                                                                                                   "fontFamily":  "Plus Jakarta Sans",
+                                                                                                   "fontSize":  "36px",
+                                                                                                   "fontWeight":  "700",
+                                                                                                   "lineHeight":  "44px",
+                                                                                                   "letterSpacing":  "-0.02em"
+                                                                                               },
+                                                                               "label-sm":  {
+                                                                                                "fontFamily":  "Plus Jakarta Sans",
+                                                                                                "fontSize":  "11px",
+                                                                                                "fontWeight":  "700",
+                                                                                                "lineHeight":  "14px",
+                                                                                                "letterSpacing":  "0.04em"
+                                                                                            },
+                                                                               "label-md":  {
+                                                                                                "fontFamily":  "Plus Jakarta Sans",
+                                                                                                "fontSize":  "12px",
+                                                                                                "fontWeight":  "600",
+                                                                                                "lineHeight":  "16px",
+                                                                                                "letterSpacing":  "0.02em"
+                                                                                            },
+                                                                               "headline-lg":  {
+                                                                                                   "fontFamily":  "Plus Jakarta Sans",
+                                                                                                   "fontSize":  "28px",
+                                                                                                   "fontWeight":  "600",
+                                                                                                   "lineHeight":  "36px",
+                                                                                                   "letterSpacing":  "-0.01em"
+                                                                                               },
+                                                                               "headline-xl-mobile":  {
+                                                                                                          "fontFamily":  "Plus Jakarta Sans",
+                                                                                                          "fontSize":  "28px",
+                                                                                                          "fontWeight":  "700",
+                                                                                                          "lineHeight":  "36px",
+                                                                                                          "letterSpacing":  "-0.01em"
+                                                                                                      },
+                                                                               "headline-lg-mobile":  {
+                                                                                                          "fontFamily":  "Plus Jakarta Sans",
+                                                                                                          "fontSize":  "22px",
+                                                                                                          "fontWeight":  "600",
+                                                                                                          "lineHeight":  "30px",
+                                                                                                          "letterSpacing":  "-0.01em"
+                                                                                                      },
+                                                                               "title-lg":  {
+                                                                                                "fontFamily":  "Plus Jakarta Sans",
+                                                                                                "fontSize":  "18px",
+                                                                                                "fontWeight":  "600",
+                                                                                                "lineHeight":  "26px"
+                                                                                            }
+                                                                           },
+                                                            "spacing":  {
+                                                                            "gutter":  "1.5rem",
+                                                                            "margin":  "2rem",
+                                                                            "space-md":  "1rem",
+                                                                            "space-xs":  "0.25rem",
+                                                                            "space-xl":  "2.5rem",
+                                                                            "space-sm":  "0.5rem",
+                                                                            "space-lg":  "1.5rem",
+                                                                            "margin-mobile":  "1rem",
+                                                                            "gutter-mobile":  "1rem"
+                                                                        },
+                                                            "headlineFontFamily":  "Plus Jakarta Sans",
+                                                            "bodyFontFamily":  "Plus Jakarta Sans",
+                                                            "labelFontFamily":  "Plus Jakarta Sans"
+                                                        }
+                                          },
+                         "version":  "1"
+                     }
+}
