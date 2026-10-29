@@ -704,6 +704,80 @@ module.exports = {
     return { count: updatedCount };
   },
 
+  // Fungsi Normalisasi Nama Pegawai (Hapus gelar depan/belakang, tanda baca, & spasi berlebih)
+  normalizePegawaiName(name) {
+    if (!name) return '';
+    let s = String(name).toUpperCase();
+    // Tangani huruf dieja spasi misalnya 'J U A N A H' -> 'JUANAH'
+    s = s.replace(/\b([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\b/g, '$1$2$3$4$5$6');
+    s = s.replace(/\b([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\b/g, '$1$2$3$4$5');
+    s = s.replace(/\b([A-Z])\s+([A-Z])\s+([A-Z])\b/g, '$1$2$3$4');
+    s = s.replace(/\b([A-Z])\s+([A-Z])\b/g, '$1$2$3');
+    s = s.replace(/[^A-Z0-9\s]/g, ' ');
+
+    const titles = [
+      'DRA', 'DRS', 'DR', 'HJ', 'HAJI', 'H', 'PROF', 'IR',
+      'S PD', 'SPD', 'M PD', 'MPD', 'S SOS', 'SSOS', 'S KOM', 'SKOM',
+      'S E', 'SE', 'M M', 'MM', 'M SI', 'MSI', 'M SC', 'MSC',
+      'A MD', 'AMD', 'S AG', 'SAG', 'S H', 'SH', 'S T', 'ST',
+      'S KED', 'SKED', 'S PSI', 'S FARM', 'S IP', 'SIP', 'M HUM'
+    ];
+    for (const t of titles) {
+      const reg = new RegExp(`\\b${t}\\b`, 'gi');
+      s = s.replace(reg, ' ');
+    }
+
+    return s.replace(/\s+/g, ' ').trim();
+  },
+
+  // Cari dan Cocokkan Data Pegawai berdasarkan Kemiripan Nama (Tanpa NIP)
+  matchPegawaiByName(searchName) {
+    if (!searchName || String(searchName).trim().length < 3) return null;
+    const targetClean = this.normalizePegawaiName(searchName);
+    if (!targetClean || targetClean.length < 3) return null;
+
+    const all = db.prepare('SELECT nip, nama, nik, instansi, satker, golongan, jabatan, slip_gaji_json FROM master_pegawai').all();
+    const targetWords = targetClean.split(' ').filter(w => w.length > 1);
+
+    let best = null;
+    let maxScore = 0;
+
+    for (const p of all) {
+      const pClean = this.normalizePegawaiName(p.nama);
+      if (!pClean) continue;
+
+      // 1. Exact clean match
+      if (targetClean === pClean) {
+        return { pegawai: p, score: 100, nip: p.nip, nama: p.nama };
+      }
+
+      // 2. Token overlap
+      const pWords = pClean.split(' ').filter(w => w.length > 1);
+      if (pWords.length === 0) continue;
+
+      let matchedCount = 0;
+      for (const tw of targetWords) {
+        if (pWords.includes(tw)) matchedCount++;
+      }
+
+      const coverageTarget = matchedCount / targetWords.length;
+      const coveragePegawai = matchedCount / pWords.length;
+      const avgCoverage = (coverageTarget + coveragePegawai) / 2;
+
+      if (coverageTarget >= 0.8 && matchedCount >= 2) {
+        const score = Math.round(avgCoverage * 100);
+        if (score > maxScore) {
+          maxScore = score;
+          best = { pegawai: p, score, nip: p.nip, nama: p.nama };
+        }
+      } else if (targetWords.length === 1 && pWords.length === 1 && targetWords[0] === pWords[0]) {
+        return { pegawai: p, score: 95, nip: p.nip, nama: p.nama };
+      }
+    }
+
+    return maxScore >= 75 ? best : null;
+  },
+
   // Terapkan data gaji dan potongan hasil ekstraksi (Excel/PDF/JPEG) ke database SQLite
   applyExtractedPayroll({ periode = 'Oktober 2026', filename = 'payroll_ekstraksi.csv', records = [], csvContent = '' }) {
     // 1. Simpan salinan berkas CSV hasil ekstraksi untuk riwayat arsip
@@ -751,7 +825,20 @@ module.exports = {
     // Deduplikasi data agar baris tanda tangan di bagian akhir berkas tidak menimpa data gaji ASN yang sah
     const dedupMap = new Map();
     for (const item of records) {
-      const nip = (item.nip || '').toString().trim().replace(/\D/g, '');
+      let nip = (item.nip || '').toString().trim().replace(/\D/g, '');
+      const nama = (item.nama || '').trim();
+
+      // Jika NIP tidak valid 18 digit, otomatis cocokkan by nama di master_pegawai
+      if (nip.length !== 18 && nama) {
+        const matched = this.matchPegawaiByName(nama);
+        if (matched) {
+          nip = matched.nip;
+          item.nip = matched.nip;
+          if (!item.nama || item.nama === 'Pegawai ASN') item.nama = matched.nama;
+          item.matchedByName = true;
+        }
+      }
+
       if (nip.length !== 18) continue;
       const kotor = parseInt(item.gajiKotor, 10) || 0;
       if (!dedupMap.has(nip)) {
