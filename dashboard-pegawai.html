@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal e-Slip Pegawai ASN - Rekapitulasi Gaji Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Courier New"', 'monospace']
+          },
+          colors: {
+            asn: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+              950: '#082f49'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+
+      #printable-slip-area,
+      #printable-slip-area * {
+        visibility: visible;
+      }
+
+      #printable-slip-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none !important;
+        border: none !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP APP BAR -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 shadow-md no-print">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3">
+        <a href="dashboard-pegawai.html" class="flex items-center gap-3">
+          <div
+            class="w-11 h-11 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
+            <span class="material-symbols-outlined text-[26px]">badge</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xl font-extrabold tracking-tight text-white">e-SlipASN</span>
+              <span
+                class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-sky-500/20 text-sky-300 border border-sky-500/30">Pegawai</span>
+            </div>
+            <p class="text-xs text-slate-300">Portal Layanan Mandiri Aparatur Sipil Negara</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Sesi Akun Pegawai yang Sedang Login -->
+      <div id="session-badge-container"
+        class="hidden md:flex items-center gap-2 bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-400 font-medium">Pegawai Aktif:</span>
+        <span id="session-pegawai-info" class="font-bold text-white truncate max-w-[240px]">Memuat Sesi...</span>
+      </div>
+
+      <!-- Right User Controls -->
+      <div class="flex items-center gap-3">
+        <a id="btn-portal-bendahara" href="dashboard-bendahara.html"
+          class="hidden sm:hidden items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-all border border-slate-700">
+          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+          <span>Portal Bendahara</span>
+        </a>
+
+        <div class="h-6 w-px bg-slate-800 hidden sm:block"></div>
+
+        <button onclick="handleLogoutPegawai(event)" title="Keluar Akun" type="button"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600/20 text-rose-300 hover:bg-rose-600 hover:text-white text-xs font-bold transition-all border border-rose-500/30 cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">logout</span>
+          <span>Keluar</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+    <!-- PROFIL CARD PEGAWAI ASN -->
+    <div
+      class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
+
+      <!-- Background pattern decor -->
+      <div class="absolute -right-16 -top-16 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+
+        <div class="flex items-center gap-4 sm:gap-5">
+          <!-- Avatar Icon -->
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 p-0.5 shadow-lg flex-shrink-0">
+            <div
+              class="w-full h-full bg-slate-900 rounded-2xl flex items-center justify-center font-bold text-xl sm:text-2xl text-sky-400">
+              <span id="card-avatar-initial">VP</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+              <h1 id="card-nama" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">VICKY SETYA PUTRA
+              </h1>
+              <span id="card-badge-status"
+                class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">PPPK
+                Aktif</span>
+            </div>
+
+            <div class="text-xs sm:text-sm text-slate-300 font-mono tracking-wider flex items-center gap-2 mb-1">
+              <span>NIP. <strong id="card-nip" class="text-white">199411062025211063</strong></span>
+              <span class="text-slate-500">&bull;</span>
+              <span id="card-golongan" class="font-sans text-sky-300 font-semibold">Penata / Gol. III</span>
+            </div>
+
+            <div class="text-xs text-slate-400 flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px] text-slate-400">location_on</span>
+              <span id="card-satker">Dinas Pendidikan dan Kebudayaan</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rekening & Bank Badge -->
+        <div
+          class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 w-full md:w-auto text-left sm:text-right flex-shrink-0">
+          <div class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Rekening Gaji Payroll</div>
+          <div id="card-rekening" class="text-base font-extrabold font-mono text-white tracking-wider mt-0.5">0062205877
+          </div>
+          <div class="text-[11px] text-emerald-400 font-semibold flex items-center md:justify-end gap-1 mt-1">
+            <span class="material-symbols-outlined text-[14px]">account_balance</span>
+            <span>PT BPD JATIM (BANK JATIM)</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- REKAPITULASI SUMMARY CARDS (BULAN INI) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+      <!-- Card 1: Gaji Bersih Terakhir -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Take Home Pay (Bulan Ini)</span>
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+          </div>
+        </div>
+        <div id="rekap-gaji-bersih" class="text-3xl font-extrabold text-emerald-700 tracking-tight mb-1">Rp 0</div>
+        <div class="text-[11px] text-slate-500 flex items-center gap-1">
+          <span class="material-symbols-outlined text-emerald-600 text-[14px]">check_circle</span>
+          <span id="rekap-tanggal-cair">Sudah masuk rekening per 25 September 2026</span>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+      </div>
+
+      <!-- Card 2: Total Potongan -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Potongan Bulan Ini</span>
+          <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+          </div>
+        </div>
+        <div id="rekap-potongan" class="text-3xl font-extrabold text-rose-600 tracking-tight mb-1">Rp 0</div>
+        <div class="text-[11px] text-slate-500">
+          KORPRI, Bank, Koperasi, BPJS
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500"></div>
+      </div>
+
+      <!-- Card 3: Status Keabsahan Dokumen TTE -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Keabsahan Dokumen</span>
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">verified_user</span>
+          </div>
+        </div>
+        <div class="text-xl font-extrabold text-slate-900 tracking-tight mb-1 flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span>Tersertifikasi BSrE</span>
+        </div>
+        <div class="text-[11px] text-slate-500">
+          Tanda Tangan Elektronik Sah BKN / BSSN
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+      </div>
+
+    </div>
+
+    <!-- ELEKTRONIK SLIP GAJI CARD / RINCIAN DETAIL -->
+    <div id="printable-slip-area" class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+
+      <!-- Card Toolbar Header -->
+      <div
+        class="p-5 sm:p-6 border-b border-slate-200 bg-slate-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-bold text-slate-900">Rincian Slip Gaji Elektronik (e-Slip)</h2>
+            <span
+              class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">Resmi</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Rincian komponen penghasilan dan potongan terverifikasi kedinasan.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Month Selector -->
+          <div class="flex items-center bg-white rounded-lg border border-slate-300 p-1">
+            <span class="material-symbols-outlined text-slate-400 text-[18px] ml-2 mr-1">event</span>
+            <select id="select-bulan" onchange="onBulanChange()"
+              class="bg-transparent text-xs font-bold text-slate-800 py-1 pr-3 focus:outline-none cursor-pointer">
+              <option value="Oktober 2026" selected>Oktober 2026 (Pra-Cair / Terbit)</option>
+              <option value="September 2026">September 2026</option>
+              <option value="Agustus 2026">Agustus 2026</option>
+              <option value="Juli 2026">Juli 2026</option>
+              <option value="Juni 2026">Juni 2026</option>
+              <option value="Mei 2026">Mei 2026</option>
+            </select>
+          </div>
+
+          <!-- Print / PDF Action -->
+          <button onclick="window.print()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm shadow-blue-500/20">
+            <span class="material-symbols-outlined text-[17px]">print</span>
+            <span>Cetak / Simpan PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PRINT HEADER (Hanya Tampil saat Diprint) -->
+      <div class="hidden print:block p-6 text-center border-b-2 border-slate-900 mb-4">
+        <div class="text-xs uppercase tracking-widest font-bold text-slate-600">Pemerintah Kota / Kabupaten</div>
+        <div class="text-base uppercase tracking-wider font-extrabold text-slate-900">Dinas Pendidikan dan Kebudayaan
+        </div>
+        <div class="text-[10px] text-slate-500">Portal Resmi e-SlipASN &bull; Slip Gaji Pegawai Negeri Sipil / PPPK
+        </div>
+        <div class="w-full h-0.5 bg-slate-900 mt-2"></div>
+      </div>
+
+      <!-- SLIP GAJI BODY CONTENT -->
+      <div class="p-6 sm:p-8 space-y-6">
+
+        <!-- Header Info Slip -->
+        <div
+          class="bg-slate-50 rounded-xl p-4 border border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">Nomor Referensi e-Slip</span>
+            <span id="slip-nomor" class="font-mono font-bold text-slate-800 text-xs">SLIP/2026/09/211063</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">Periode Pembayaran</span>
+            <span id="slip-periode-label" class="font-bold text-slate-800 text-xs">September 2026</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">Penerbit &amp; Bendahara</span>
+            <span id="slip-bendahara" class="font-semibold text-slate-800 text-xs">Dra. ERNA NURLAYLI, SE.</span>
+          </div>
+        </div>
+
+        <!-- Dua Kolom Penghasilan vs Potongan -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- SEKSI I: PENGHASILAN (KOMPONEN GAJI) -->
+          <div class="bg-blue-50/30 rounded-xl p-5 border border-blue-100 flex flex-col justify-between">
+            <div>
+              <div
+                class="flex items-center gap-2 pb-2.5 border-b border-blue-200/80 text-blue-900 font-bold text-sm mb-3">
+                <span class="material-symbols-outlined text-blue-600 text-[20px]">payments</span>
+                <span>I. Komponen Penghasilan</span>
+              </div>
+
+              <div class="space-y-2.5 text-xs">
+                <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                  <span class="text-slate-600">Gaji Pokok ASN</span>
+                  <span id="detail-gaji-pokok" class="font-bold text-slate-900">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                  <span class="text-slate-600">Tunjangan Keluarga (Istri/Anak)</span>
+                  <span id="detail-tunj-keluarga" class="font-semibold text-slate-800">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                  <span class="text-slate-600">Tunjangan Jabatan / Fungsional</span>
+                  <span id="detail-tunj-jabatan" class="font-semibold text-slate-800">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                  <span class="text-slate-600">Tunjangan Pangan / Beras</span>
+                  <span id="detail-tunj-beras" class="font-semibold text-slate-800">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                  <span class="text-slate-600">Tunjangan Kinerja / TPP</span>
+                  <span id="detail-tunj-kinerja" class="font-semibold text-slate-800">Rp 0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 mt-4 border-t-2 border-blue-200 flex justify-between items-center">
+              <span class="font-bold text-blue-950 text-xs">Total Penghasilan Kotor</span>
+              <span id="detail-total-kotor" class="font-extrabold text-blue-800 text-base">Rp 0</span>
+            </div>
+          </div>
+
+          <!-- SEKSI II: POTONGAN -->
+          <div class="bg-rose-50/30 rounded-xl p-5 border border-rose-100 flex flex-col justify-between">
+            <div>
+              <div
+                class="flex items-center justify-between pb-2.5 border-b border-rose-200/80 text-rose-900 font-bold text-sm mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-rose-600 text-[20px]">content_cut</span>
+                  <span>II. Komponen Potongan Kedinasan</span>
+                </div>
+                <span class="text-[10px] font-mono bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">10 Rincian</span>
+              </div>
+
+              <div class="space-y-1.5 text-xs max-h-72 overflow-y-auto pr-1">
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">1. BPD / KMG</span>
+                  <span id="detail-pot-bpd" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">2. Iuran KORPRI</span>
+                  <span id="detail-pot-korpri" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">3. Koperasi Tentrem</span>
+                  <span id="detail-pot-tentrem" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">4. Koperasi KGR</span>
+                  <span id="detail-pot-kgr" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">5. Koperasi Harapan</span>
+                  <span id="detail-pot-harapan" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">6. Koperasi Guyub Rukun</span>
+                  <span id="detail-pot-guyub" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">7. BPR Jatim</span>
+                  <span id="detail-pot-bprjatim" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">8. Joyoboyo</span>
+                  <span id="detail-pot-joyoboyo" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">9. BPR Kota</span>
+                  <span id="detail-pot-bprkota" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+                  <span class="text-slate-600">10. Dharma Wanita</span>
+                  <span id="detail-pot-dw" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center py-0.5 border-b border-slate-100" id="detail-row-adm">
+                  <span class="text-slate-600">Administrasi Bank / Mitra</span>
+                  <span id="detail-pot-adm" class="font-medium text-rose-700 font-mono">Rp 0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 mt-4 border-t-2 border-rose-200 flex justify-between items-center">
+              <span class="font-bold text-rose-950 text-xs">Total Potongan Resmi</span>
+              <span id="detail-total-potongan" class="font-extrabold text-rose-700 text-base">Rp 0</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- JUMLAH BERSIH (TAKE HOME PAY) BESAR -->
+        <div
+          class="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent rounded-2xl p-6 border-2 border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-0.5">Penghasilan Bersih Diterima
+              (Take Home Pay)</div>
+            <div id="detail-terbilang" class="text-xs italic text-emerald-900 font-medium">"Tujuh Juta Dua Ratus Ribu
+              Rupiah"</div>
+          </div>
+          <div class="text-right">
+            <div id="detail-gaji-bersih-box" class="text-3xl font-extrabold text-emerald-800 font-mono tracking-tight">
+              Rp 0</div>
+            <div class="text-[11px] text-emerald-700 font-medium">Ditransfer ke Bank Jatim</div>
+          </div>
+        </div>
+
+        <!-- KEABSAHAN & DIGITAL SIGNATURE / TTE FOOTER -->
+        <div class="pt-4 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+
+          <div class="flex items-center gap-3">
+            <div
+              class="w-14 h-14 bg-white p-1 border border-slate-200 rounded-lg flex items-center justify-center flex-shrink-0">
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ESLIPASN-BSRE-VERIFIKASI-VALID-2026"
+                alt="QR Code TTE" class="w-full h-full object-contain">
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-800 flex items-center gap-1">
+                <span class="material-symbols-outlined text-emerald-600 text-[16px]">verified</span>
+                <span>Tanda Tangan Elektronik Sah</span>
+              </div>
+              <p class="text-[10px] text-slate-500 mt-0.5 leading-snug">
+                Sesuai UU ITE Pasal 5 ayat (1), informasi elektronik ini merupakan alat bukti hukum yang sah serta
+                tersertifikasi BSrE BKN.
+              </p>
+            </div>
+          </div>
+
+          <div class="text-left sm:text-right text-xs">
+            <div class="text-slate-400 text-[10px] uppercase font-bold">Pengesahan Keuangan</div>
+            <div class="font-bold text-slate-900 mt-0.5">Dra. ERNA NURLAYLI, SE.</div>
+            <div class="text-[11px] text-slate-500">Bendahara Pengeluaran Dinas Pendidikan</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIWAYAT PENERIMAAN GAJI 6 BULAN TERAKHIR (TABEL REKAP) -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 no-print space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Rekapitulasi Gaji 6 Bulan Terakhir</h3>
+          <p class="text-xs text-slate-500">Riwayat penyaluran hak keuangan pegawai tahun anggaran 2026.</p>
+        </div>
+        <span class="px-2.5 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-700">T.A. 2026</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-slate-50 text-slate-600 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+              <th class="py-3 px-3">Periode Bulan</th>
+              <th class="py-3 px-3">Nomor Bukti e-Slip</th>
+              <th class="py-3 px-3 text-right">Gaji Kotor</th>
+              <th class="py-3 px-3 text-right">Total Potongan</th>
+              <th class="py-3 px-3 text-right">Gaji Bersih Diterima</th>
+              <th class="py-3 px-3 text-center">Status Bank</th>
+              <th class="py-3 px-3 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody" class="divide-y divide-slate-100 text-slate-700">
+            <!-- Dynamic rows populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500 no-print">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>&copy; 2026 <strong>e-SlipASN</strong> &bull; Portal Layanan Informasi Kepegawaian &amp; Penggajian Terpadu
+        Aparatur Sipil Negara RI.</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT CONTROLLER -->
+  <script>
+    let activePegawaiData = null;
+    let loggedInUser = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. CEK SESI LOGIN: Pegawai HANYA bisa melihat dashboard setelah daftar dan login!
+      const sessionRaw = localStorage.getItem('eslip_session');
+      if (!sessionRaw) {
+        alert('Akses Dibatasi!\n\nAnda belum masuk (login).\nSilakan lakukan pendaftaran akun (jika belum) dan login menggunakan NIP serta kata sandi Anda untuk mengakses Dashboard Pegawai.');
+        window.location.replace('masuk.html#login');
+        return;
+      }
+
+      try {
+        loggedInUser = JSON.parse(sessionRaw);
+      } catch (err) {
+        localStorage.removeItem('eslip_session');
+        window.location.replace('masuk.html#login');
+        return;
+      }
+
+      if (!loggedInUser || !loggedInUser.nip) {
+        alert('Sesi masuk Anda tidak sah atau telah kedaluwarsa. Silakan masuk (login) kembali.');
+        localStorage.removeItem('eslip_session');
+        window.location.replace('masuk.html#login');
+        return;
+      }
+
+      // Tampilkan identitas pegawai yang terautentikasi di header
+      const sessionInfo = document.getElementById('session-pegawai-info');
+      if (sessionInfo) {
+        sessionInfo.textContent = `${loggedInUser.nama} (${loggedInUser.nip})`;
+      }
+
+      // Tampilkan tombol Portal Bendahara HANYA jika yang login adalah peran Bendahara
+      const btnBendahara = document.getElementById('btn-portal-bendahara');
+      if (btnBendahara && loggedInUser.role === 'bendahara') {
+        btnBendahara.classList.remove('hidden');
+        btnBendahara.classList.add('inline-flex');
+      }
+
+      // 2. Muat rincian profil dan slip gaji khusus untuk pegawai yang login
+      loadPegawaiProfile(loggedInUser.nip);
+    });
+
+    // Handler Logout Pegawai
+    function handleLogoutPegawai(e) {
+      if (e) e.preventDefault();
+      if (confirm('Apakah Anda yakin ingin keluar dari Portal e-Slip Pegawai?')) {
+        localStorage.removeItem('eslip_session');
+        window.location.replace('masuk.html#login');
+      }
+    }
+
+    // Ambil data detail profil dan slip gaji dari backend sesuai NIP login
+    async function loadPegawaiProfile(nip) {
+      if (!nip) return;
+
+      try {
+        const res = await fetch(`/api/slip-gaji/${encodeURIComponent(nip)}`);
+        const json = await res.json();
+
+        if (json.success && json.data) {
+          activePegawaiData = json.data;
+          renderPegawaiDashboard(activePegawaiData);
+        } else {
+          // Jika belum ada di master database, gunakan profil dari sesi login
+          if (loggedInUser) {
+            renderPegawaiDashboard(loggedInUser);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching pegawai:', err);
+        if (loggedInUser) {
+          renderPegawaiDashboard(loggedInUser);
+        }
+      }
+    }
+
+    // Render tampilan dashboard dengan data pegawai
+    function renderPegawaiDashboard(p) {
+      if (!p) return;
+
+      // Update Card Header Profil
+      document.getElementById('card-nama').textContent = p.nama;
+      document.getElementById('card-nip').textContent = p.nip;
+      document.getElementById('card-golongan').textContent = p.golongan || 'Penata / Gol. III';
+      document.getElementById('card-satker').textContent = p.satker || 'Dinas Pendidikan dan Kebudayaan';
+
+      // Inisial Nama
+      const parts = p.nama.split(' ').filter(x => x.length > 0 && !x.includes('.'));
+      const initial = (parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '');
+      document.getElementById('card-avatar-initial').textContent = initial.toUpperCase() || 'ASN';
+
+      // Badge PNS / PPPK
+      const isPppk = p.statusPegawai && p.statusPegawai.includes('PPPK');
+      const badgeEl = document.getElementById('card-badge-status');
+      if (isPppk) {
+        badgeEl.textContent = 'PPPK Aktif';
+        badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30';
+      } else {
+        badgeEl.textContent = 'PNS Aktif';
+        badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-400/20 text-blue-300 border border-blue-400/30';
+      }
+
+      // Slip Gaji
+      const slip = p.slipGaji || {};
+      const rekening = slip.rekening || `0062${p.nip.substring(10, 16)}`;
+      document.getElementById('card-rekening').textContent = rekening;
+
+      const pend = slip.pendapatan || {};
+      const pot = slip.potongan || {};
+
+      const pokok = pend.gajiPokok || slip.gajiPokok || 4500000;
+      const keluarga = pend.tunjanganKeluarga || slip.tunjanganKeluarga || 450000;
+      const jabatan = pend.tunjanganJabatan || slip.tunjanganJabatan || 600000;
+      const beras = pend.tunjanganBeras || slip.tunjanganBeras || 289680;
+      const kinerja = pend.tunjanganKinerja || slip.tunjanganKinerja || 0;
+      const kotor = slip.gajiKotor || (pokok + keluarga + jabatan + beras + kinerja);
+
+      // 10 Potongan Resmi Dinas
+      const potBpd = pot.bpd || pot.bpdKmg || 0;
+      const potKorpri = pot.korpri || 0;
+      const potTentrem = pot.kopTentrem || 0;
+      const potKgr = pot.kopKgr || 0;
+      const potHarapan = pot.kopHarapan || 0;
+      const potGuyub = pot.kopGuyub || 0;
+      const potBprJatim = pot.bprJatim || 0;
+      const potJoyoboyo = pot.joyoboyo || 0;
+      const potBprKota = pot.bprKota || 0;
+      const potDw = pot.dharmaWanita || 0;
+      const potAdm = pot.administrasi || 0;
+
+      const totalPot = slip.totalPotongan || (potBpd + potKorpri + potTentrem + potKgr + potHarapan + potGuyub + potBprJatim + potJoyoboyo + potBprKota + potDw + potAdm);
+      const bersih = slip.totalGajiBersih || (kotor - totalPot);
+
+      // Render Summary KPI
+      document.getElementById('rekap-gaji-bersih').textContent = formatRupiah(bersih);
+      document.getElementById('rekap-potongan').textContent = formatRupiah(totalPot);
+
+      // Render Detail Section
+      document.getElementById('slip-nomor').textContent = slip.nomorSlip || `SLIP/2026/09/${p.nip.substring(12, 18)}`;
+      document.getElementById('slip-periode-label').textContent = slip.periode || 'September 2026';
+      document.getElementById('slip-bendahara').textContent = slip.bendahara || 'Dra. ERNA NURLAYLI, SE.';
+
+      document.getElementById('detail-gaji-pokok').textContent = formatRupiah(pokok);
+      document.getElementById('detail-tunj-keluarga').textContent = formatRupiah(keluarga);
+      document.getElementById('detail-tunj-jabatan').textContent = formatRupiah(jabatan);
+      document.getElementById('detail-tunj-beras').textContent = formatRupiah(beras);
+      document.getElementById('detail-tunj-kinerja').textContent = formatRupiah(kinerja);
+      document.getElementById('detail-total-kotor').textContent = formatRupiah(kotor);
+
+      // Render 10 Potongan Resmi
+      document.getElementById('detail-pot-bpd').textContent = formatRupiah(potBpd);
+      document.getElementById('detail-pot-korpri').textContent = formatRupiah(potKorpri);
+      document.getElementById('detail-pot-tentrem').textContent = formatRupiah(potTentrem);
+      document.getElementById('detail-pot-kgr').textContent = formatRupiah(potKgr);
+      document.getElementById('detail-pot-harapan').textContent = formatRupiah(potHarapan);
+      document.getElementById('detail-pot-guyub').textContent = formatRupiah(potGuyub);
+      document.getElementById('detail-pot-bprjatim').textContent = formatRupiah(potBprJatim);
+      document.getElementById('detail-pot-joyoboyo').textContent = formatRupiah(potJoyoboyo);
+      document.getElementById('detail-pot-bprkota').textContent = formatRupiah(potBprKota);
+      document.getElementById('detail-pot-dw').textContent = formatRupiah(potDw);
+      document.getElementById('detail-pot-adm').textContent = formatRupiah(potAdm);
+      document.getElementById('detail-total-potongan').textContent = formatRupiah(totalPot);
+
+      document.getElementById('detail-gaji-bersih-box').textContent = formatRupiah(bersih);
+      document.getElementById('detail-terbilang').textContent = `"${terbilangRupiah(bersih)}"`;
+
+      // Render Tabel Riwayat 6 Bulan
+      renderPayrollHistory(p.nip, kotor, totalPot, bersih);
+    }
+
+    // Render Tabel Riwayat 6 Bulan
+    // Render Tabel Riwayat 6 Bulan
+    function renderPayrollHistory(nip, kotor, pot, bersih) {
+      const tbody = document.getElementById('history-tbody');
+      const bulanList = [
+        { bln: 'Oktober 2026', ref: `SLIP/2026/10/${nip.substring(12, 18)}`, tgl: 'Pengerjaan 25 Sep 2026', status: 'Terbit (Pra-Cair)', statusClass: 'bg-blue-100 text-blue-800', dotClass: 'bg-blue-600' },
+        { bln: 'September 2026', ref: `SLIP/2026/09/${nip.substring(12, 18)}`, tgl: '25 Sep 2026', status: 'Berhasil Cair', statusClass: 'bg-emerald-100 text-emerald-800', dotClass: 'bg-emerald-600' },
+        { bln: 'Agustus 2026', ref: `SLIP/2026/08/${nip.substring(12, 18)}`, tgl: '25 Ags 2026', status: 'Berhasil Cair', statusClass: 'bg-emerald-100 text-emerald-800', dotClass: 'bg-emerald-600' },
+        { bln: 'Juli 2026', ref: `SLIP/2026/07/${nip.substring(12, 18)}`, tgl: '25 Jul 2026', status: 'Berhasil Cair', statusClass: 'bg-emerald-100 text-emerald-800', dotClass: 'bg-emerald-600' },
+        { bln: 'Juni 2026', ref: `SLIP/2026/06/${nip.substring(12, 18)}`, tgl: '25 Jun 2026', status: 'Berhasil Cair', statusClass: 'bg-emerald-100 text-emerald-800', dotClass: 'bg-emerald-600' },
+        { bln: 'Mei 2026', ref: `SLIP/2026/05/${nip.substring(12, 18)}`, tgl: '25 Mei 2026', status: 'Berhasil Cair', statusClass: 'bg-emerald-100 text-emerald-800', dotClass: 'bg-emerald-600' }
+      ];
+
+      let html = '';
+      bulanList.forEach((b, idx) => {
+        html += `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3 px-3 font-bold text-slate-900">${b.bln}</td>
+            <td class="py-3 px-3 font-mono text-slate-500 text-[11px]">${b.ref}</td>
+            <td class="py-3 px-3 text-right font-medium text-slate-700">${formatRupiah(kotor)}</td>
+            <td class="py-3 px-3 text-right font-medium text-rose-600">${formatRupiah(pot)}</td>
+            <td class="py-3 px-3 text-right font-bold text-emerald-700">${formatRupiah(bersih)}</td>
+            <td class="py-3 px-3 text-center">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${b.statusClass}">
+                <span class="w-1.5 h-1.5 rounded-full ${b.dotClass}"></span> ${b.status}
+              </span>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <button onclick="window.print()" title="Cetak Slip ${b.bln}" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 font-bold text-[11px] flex items-center gap-1 mx-auto">
+                <span class="material-symbols-outlined text-[14px]">print</span>
+                <span>Cetak</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function onBulanChange() {
+      const bln = document.getElementById('select-bulan').value;
+      document.getElementById('slip-periode-label').textContent = bln;
+      if (bln.includes('Oktober')) {
+        document.getElementById('rekap-tanggal-cair').textContent = 'Pengerjaan akhir Sep 2026 • Penyaluran 1 Okt 2026';
+      } else {
+        document.getElementById('rekap-tanggal-cair').textContent = `Sudah masuk rekening per 25 ${bln}`;
+      }
+    }
+
+    // Helper Rupiah Format
+    function formatRupiah(num) {
+      if (!num || isNaN(num)) return 'Rp 0';
+      return 'Rp ' + Number(num).toLocaleString('id-ID');
+    }
+
+    // Terbilang Rupiah
+    function terbilangRupiah(angka) {
+      const bil = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+      function convert(n) {
+        if (n < 12) return bil[n];
+        if (n < 20) return convert(n - 10) + " Belas";
+        if (n < 100) return convert(Math.floor(n / 10)) + " Puluh " + convert(n % 10);
+        if (n < 200) return "Seratus " + convert(n - 100);
+        if (n < 1000) return convert(Math.floor(n / 100)) + " Ratus " + convert(n % 100);
+        if (n < 2000) return "Seribu " + convert(n - 1000);
+        if (n < 1000000) return convert(Math.floor(n / 1000)) + " Ribu " + convert(n % 1000);
+        if (n < 1000000000) return convert(Math.floor(n / 1000000)) + " Juta " + convert(n % 1000000);
+        if (n < 1000000000000) return convert(Math.floor(n / 1000000000)) + " Miliar " + convert(n % 1000000000);
+        return "";
+      }
+      if (!angka || angka <= 0) return "Nol Rupiah";
+      return convert(Math.floor(angka)).replace(/\s+/g, ' ').trim() + " Rupiah";
+    }
+  </script>
+</body>
+
+</html>

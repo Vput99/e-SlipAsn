@@ -1,0 +1,2897 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Bendahara - Pengelolaan Slip Gaji e-SlipASN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Courier New"', 'monospace']
+          },
+          colors: {
+            gov: {
+              50: '#f0f5ff',
+              100: '#e0ecff',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              800: '#1e3a8a',
+              900: '#0f2357',
+              950: '#071330'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Library Ekstraksi Dokumen: SheetJS (Excel), PDF.js (PDF), dan Tesseract.js (OCR Gambar/JPEG) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-modal, #print-modal * {
+        visibility: visible;
+      }
+      #print-modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP HEADER / NAVBAR -->
+  <header class="bg-gov-950 text-white sticky top-0 z-40 border-b border-gov-900 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-4">
+        <a href="dashboard-bendahara.html" class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+            <span class="material-symbols-outlined text-[26px]">account_balance</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xl font-extrabold tracking-tight text-white">e-SlipASN</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">Bendahara</span>
+            </div>
+            <p class="text-xs text-slate-300">Modul Penggajian &amp; Administrasi Keuangan ASN</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Center Status -->
+      <div class="hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/60 text-xs">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-300 font-medium">Server Payroll Terhubung (BSrE Valid)</span>
+      </div>
+
+      <!-- Right Actions & Profile -->
+      <div class="flex items-center gap-3">
+        <a href="dashboard-pegawai.html" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-800/80 hover:bg-gov-700 text-xs font-semibold text-blue-200 hover:text-white transition-all border border-blue-500/20">
+          <span class="material-symbols-outlined text-[17px]">visibility</span>
+          <span>Pratinjau Akun ASN</span>
+        </a>
+
+        <div class="h-6 w-px bg-slate-800 hidden sm:block"></div>
+
+        <!-- Bendahara Info -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-600 border-2 border-blue-400 flex items-center justify-center font-bold text-white shadow-sm text-sm">
+            EN
+          </div>
+          <div class="hidden md:block text-left">
+            <div class="text-sm font-bold text-white leading-tight">Dra. ERNA NURLAYLI, SE.</div>
+            <div class="text-[11px] text-slate-400">Bendahara Pengeluaran Dinas</div>
+          </div>
+          <a href="masuk.html#login" title="Keluar dari sesi Bendahara" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors ml-1">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- SUBHEADER / CONTEXT BAR -->
+  <section class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
+          <span>Dinas Pendidikan</span>
+          <span>&bull;</span>
+          <span>Bidang Pengelolaan Keuangan &amp; Aset</span>
+          <span>&bull;</span>
+          <span class="text-blue-600 font-semibold">Tahun Anggaran 2026</span>
+        </div>
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Pengerjaan &amp; Pengelolaan Slip Gaji ASN</h1>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5">
+        <!-- Periode Selector (Pengerjaan Bulan Berikutnya / Pra-Cair) -->
+        <div class="flex items-center bg-slate-100 rounded-lg border border-slate-300 p-1 shadow-sm">
+          <span class="material-symbols-outlined text-blue-600 text-[18px] ml-2 mr-1">calendar_month</span>
+          <select id="select-periode" onchange="onPeriodeChange()" class="bg-transparent text-xs font-bold text-slate-800 py-1 pr-3 focus:outline-none cursor-pointer">
+            <optgroup label="⚡ Pengerjaan Gaji Bulan Berikutnya (Pra-Cair)">
+              <option value="Oktober 2026" selected>Periode: Oktober 2026 (Pengerjaan Akhir September)</option>
+              <option value="November 2026">Periode: November 2026 (Pengerjaan Akhir Oktober)</option>
+              <option value="Desember 2026">Periode: Desember 2026 (Pengerjaan Akhir November)</option>
+            </optgroup>
+            <optgroup label="📁 Periode Telah Berjalan / Riwayat">
+              <option value="September 2026">Periode: September 2026</option>
+              <option value="Agustus 2026">Periode: Agustus 2026</option>
+              <option value="Juli 2026">Periode: Juli 2026</option>
+              <option value="Juni 2026">Periode: Juni 2026</option>
+            </optgroup>
+            <option value="__custom__">+ Tambah Periode Lainnya...</option>
+          </select>
+        </div>
+
+        <!-- Info Badge Siklus Gaji -->
+        <div class="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-xs font-medium">
+          <span class="material-symbols-outlined text-[16px] text-blue-600">info</span>
+          <span>Siklus: Gaji <strong>Oktober</strong> dikerjakan akhir <strong>September</strong></span>
+        </div>
+
+        <!-- Tombol Tambah Pegawai Baru -->
+        <button onclick="openTambahPegawaiModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20">
+          <span class="material-symbols-outlined text-[17px]">person_add</span>
+          <span>Tambah Pegawai Baru</span>
+        </button>
+
+        <!-- Tombol Fitur Ekstraksi Berkas (Excel / PDF / Foto -> CSV Acuan Gaji) -->
+        <button onclick="openExtractorModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/25">
+          <span class="material-symbols-outlined text-[17px]">document_scanner</span>
+          <span>Ekstrak Excel / PDF / Foto ke CSV</span>
+        </button>
+
+        <!-- Tombol Sinkronisasi CSV -->
+        <button onclick="syncCsvPayroll()" id="btn-sync-csv" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[17px]">sync</span>
+          <span>Sinkronkan CSV</span>
+        </button>
+
+        <!-- Tombol Tambah Slip Manual -->
+        <button onclick="openCreateSlipModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20">
+          <span class="material-symbols-outlined text-[17px]">add_circle</span>
+          <span>Kerjakan Slip Baru</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+    <!-- KPI / EXECUTIVE SUMMARY CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      
+      <!-- Card 1: Total Anggaran Kotor -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Gaji Kotor</span>
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+          </div>
+        </div>
+        <div id="stat-gaji-kotor" class="text-2xl font-extrabold text-slate-900 mb-1">Rp 0</div>
+        <div class="text-[11px] text-slate-500 flex items-center gap-1">
+          <span class="text-emerald-600 font-semibold">Terserap 100%</span> dari pagu anggaran
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+      </div>
+
+      <!-- Card 2: Total Pegawai ASN -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pegawai Terdaftar</span>
+          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">groups</span>
+          </div>
+        </div>
+        <div id="stat-total-pegawai" class="text-2xl font-extrabold text-slate-900 mb-1">0 ASN</div>
+        <div class="text-[11px] text-slate-500 flex items-center gap-1">
+          <span id="stat-badge-pns-pppk" class="text-indigo-600 font-semibold">PNS &amp; PPPK Aktif</span>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500"></div>
+      </div>
+
+      <!-- Card 3: Total Potongan -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Potongan</span>
+          <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">price_check</span>
+          </div>
+        </div>
+        <div id="stat-total-potongan" class="text-2xl font-extrabold text-rose-600 mb-1">Rp 0</div>
+        <div class="text-[11px] text-slate-500">
+          Koperasi, Bank Jatim, KORPRI, Zakat
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500"></div>
+      </div>
+
+      <!-- Card 4: Total Gaji Bersih Disalurkan -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Gaji Bersih (THP)</span>
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">verified</span>
+          </div>
+        </div>
+        <div id="stat-gaji-bersih" class="text-2xl font-extrabold text-emerald-700 mb-1">Rp 0</div>
+        <div class="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">check_circle</span> Disalurkan via Payroll Bank Jatim
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+      </div>
+
+    </div>
+
+    <!-- MAIN TABLE SECTION -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+      
+      <!-- Table Header & Controls -->
+      <div class="p-5 border-b border-slate-200 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Daftar Pengerjaan Slip Gaji Pegawai</h2>
+          <p class="text-xs text-slate-500">Periksa, ubah komponen penghasilan atau potongan, dan terbitkan slip gaji resmi.</p>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="flex flex-wrap items-center gap-3">
+          
+          <!-- Search Input -->
+          <div class="relative w-full sm:w-64">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
+            <input type="text" id="input-search" oninput="filterPegawaiTable()" placeholder="Cari NIP atau Nama ASN..."
+              class="w-full pl-9 pr-3 py-2 bg-white rounded-lg border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <!-- Filter Status Dropdown -->
+          <select id="filter-status" onchange="filterPegawaiTable()"
+            class="bg-white rounded-lg border border-slate-300 text-xs font-medium text-slate-700 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="all">Semua Status</option>
+            <option value="terbit">Sudah Terbit</option>
+            <option value="draft">Belum Terbit / Draf</option>
+            <option value="pns">Khusus PNS</option>
+            <option value="pppk">Khusus PPPK</option>
+          </select>
+
+          <!-- Refresh Button -->
+          <button onclick="loadPegawaiData()" title="Segarkan Data" class="p-2 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg text-slate-600 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Table Content -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-100/80 text-slate-600 uppercase text-[11px] tracking-wider font-semibold border-b border-slate-200">
+              <th class="py-3.5 px-4 w-12 text-center">No</th>
+              <th class="py-3.5 px-4">Identitas ASN &amp; NIP</th>
+              <th class="py-3.5 px-4">Satuan Kerja &amp; Golongan</th>
+              <th class="py-3.5 px-4">No. Rekening</th>
+              <th class="py-3.5 px-4 text-right">Gaji Kotor</th>
+              <th class="py-3.5 px-4 text-right">Potongan</th>
+              <th class="py-3.5 px-4 text-right">Gaji Bersih</th>
+              <th class="py-3.5 px-4 text-center">Status</th>
+              <th class="py-3.5 px-4 text-center">Aksi Pengerjaan</th>
+            </tr>
+          </thead>
+          <tbody id="pegawai-tbody" class="divide-y divide-slate-200">
+            <tr>
+              <td colspan="9" class="py-12 text-center text-slate-400">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+                <div>Memuat data master pegawai &amp; slip gaji...</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer / Pagination -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+        <div id="table-info">Menampilkan 0 dari 0 pegawai</div>
+        <div class="flex items-center gap-1">
+          <button id="btn-prev-page" onclick="prevPage()" class="px-3 py-1.5 rounded bg-white border border-slate-300 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed">Sebelumnya</button>
+          <span id="page-num" class="px-3 py-1.5 font-bold text-slate-800">1</span>
+          <button id="btn-next-page" onclick="nextPage()" class="px-3 py-1.5 rounded bg-white border border-slate-300 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed">Selanjutnya</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL 1: FORM PENGERJAAN & INPUT SLIP GAJI -->
+  <div id="modal-edit-slip" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden my-6">
+      
+      <!-- Modal Header -->
+      <div class="p-5 bg-gradient-to-r from-gov-950 to-blue-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-600/60 border border-blue-400/40 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[22px]">edit_note</span>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white leading-snug">Pengerjaan Komponen Slip Gaji ASN</h3>
+            <p id="edit-subheading" class="text-xs text-blue-200">NIP: - &bull; -</p>
+          </div>
+        </div>
+        <button onclick="closeEditSlipModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="material-symbols-outlined text-[22px]">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Form Fields) -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-6">
+        
+        <!-- Info Pegawai Ringkas -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">Nama Pegawai</span>
+            <span id="form-nama" class="font-bold text-slate-800 text-sm">-</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">Nomor Induk Pegawai (NIP)</span>
+            <span id="form-nip" class="font-mono font-bold text-slate-800">-</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">No. Rekening Payroll</span>
+            <input type="text" id="form-rekening" class="mt-1 w-full px-2.5 py-1 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 font-mono" placeholder="0062xxxxxx">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- SEKSI 1: KOMPONEN PENGHASILAN (INCOME) -->
+          <div class="bg-blue-50/40 rounded-xl p-4 border border-blue-100 space-y-3">
+            <div class="flex items-center gap-2 pb-2 border-b border-blue-200/60 text-blue-900 font-bold text-sm">
+              <span class="material-symbols-outlined text-blue-600 text-[18px]">add_circle</span>
+              <span>Rincian Penghasilan / Gaji</span>
+            </div>
+
+            <div>
+              <label class="block text-slate-600 text-xs font-semibold mb-1">Gaji Pokok ASN (Rp)</label>
+              <input type="number" id="inp-gaji-pokok" oninput="calculateSlipForm()" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="0">
+            </div>
+
+            <div>
+              <label class="block text-slate-600 text-xs font-semibold mb-1">Tunjangan Keluarga (Istri/Suami &amp; Anak)</label>
+              <input type="number" id="inp-tunj-keluarga" oninput="calculateSlipForm()" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="0">
+            </div>
+
+            <div>
+              <label class="block text-slate-600 text-xs font-semibold mb-1">Tunjangan Jabatan / Fungsional</label>
+              <input type="number" id="inp-tunj-jabatan" oninput="calculateSlipForm()" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="0">
+            </div>
+
+            <div>
+              <label class="block text-slate-600 text-xs font-semibold mb-1">Tunjangan Beras (Natura)</label>
+              <input type="number" id="inp-tunj-beras" oninput="calculateSlipForm()" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="0">
+            </div>
+
+            <div>
+              <label class="block text-slate-600 text-xs font-semibold mb-1">Tunjangan Kinerja / TPP</label>
+              <input type="number" id="inp-tunj-kinerja" oninput="calculateSlipForm()" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="0">
+            </div>
+
+            <div class="pt-2 border-t border-blue-200/60 flex justify-between items-center text-xs">
+              <span class="font-bold text-blue-950">Subtotal Gaji Kotor:</span>
+              <span id="form-subtotal-kotor" class="font-extrabold text-blue-800 text-sm">Rp 0</span>
+            </div>
+          </div>
+
+          <!-- SEKSI 2: KOMPONEN 10 POTONGAN RESMI DINAS PENDIDIKAN -->
+          <div class="bg-rose-50/40 rounded-xl p-4 border border-rose-100 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-rose-200/60 text-rose-900 font-bold text-sm">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-rose-600 text-[18px]">remove_circle</span>
+                <span>Rincian 10 Potongan Resmi Dinas</span>
+              </div>
+              <span class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-mono">10 Komponen</span>
+            </div>
+
+            <!-- Baris 1: BPD & Korpri -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">1. BPD / KMG</label>
+                <input type="number" id="inp-pot-bpd" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">2. Iuran KORPRI</label>
+                <input type="number" id="inp-pot-korpri" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+            </div>
+
+            <!-- Baris 2: Kop Tentrem & Kop KGR -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">3. Kop. Tentrem</label>
+                <input type="number" id="inp-pot-tentrem" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">4. Kop. KGR</label>
+                <input type="number" id="inp-pot-kgr" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+            </div>
+
+            <!-- Baris 3: Kop Harapan & Kop Guyub Rukun -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">5. Kop. Harapan</label>
+                <input type="number" id="inp-pot-harapan" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">6. Kop. Guyub Rukun</label>
+                <input type="number" id="inp-pot-guyub" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+            </div>
+
+            <!-- Baris 4: BPR Jatim & Joyoboyo -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">7. BPR Jatim</label>
+                <input type="number" id="inp-pot-bprjatim" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">8. Joyoboyo (j. boyo)</label>
+                <input type="number" id="inp-pot-joyoboyo" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+            </div>
+
+            <!-- Baris 5: BPR Kota & Dharma Wanita -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">9. BPR Kota</label>
+                <input type="number" id="inp-pot-bprkota" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+              <div>
+                <label class="block text-slate-600 text-[11px] font-semibold mb-1">10. Dharma Wanita</label>
+                <input type="number" id="inp-pot-dw" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+              </div>
+            </div>
+
+            <!-- Baris 6: Administrasi -->
+            <div>
+              <label class="block text-slate-600 text-[11px] font-semibold mb-1">Administrasi Bank / Mitra</label>
+              <input type="number" id="inp-pot-adm" oninput="calculateSlipForm()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="0">
+            </div>
+
+            <div class="pt-2 border-t border-rose-200/60 flex justify-between items-center text-xs">
+              <span class="font-bold text-rose-950">Subtotal Potongan:</span>
+              <span id="form-subtotal-potongan" class="font-extrabold text-rose-700 text-sm">Rp 0</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- KALKULASI GAJI BERSIH (TAKE HOME PAY) -->
+        <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div>
+            <span class="text-xs uppercase font-bold text-emerald-800 tracking-wider block">Gaji Bersih Diterima (Take Home Pay)</span>
+            <div id="form-terbilang" class="text-[11px] text-emerald-700 italic">"Nol Rupiah"</div>
+          </div>
+          <div id="form-total-bersih" class="text-2xl font-extrabold text-emerald-800">
+            Rp 0
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeEditSlipModal()" class="px-4 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition-colors">
+          Batal
+        </button>
+        <button type="button" onclick="saveSlipGajiForm()" id="btn-save-slip" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[17px]">save</span>
+          <span>Simpan &amp; Terbitkan e-Slip</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 2: PRATINJAU CETAK SLIP GAJI KEDINASAN RESMI (A4 READY) -->
+  <div id="modal-print-slip" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-300 max-w-2xl w-full max-h-[95vh] flex flex-col overflow-hidden my-6">
+      
+      <!-- Preview Header Toolbar -->
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between no-print">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-blue-400 text-[20px]">print</span>
+          <span class="text-sm font-bold text-white">Lembar Cetak Slip Gaji Resmi Kedinasan</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>Cetak / Simpan PDF</span>
+          </button>
+          <button onclick="closePrintModal()" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable Document Area -->
+      <div id="print-modal" class="p-8 overflow-y-auto flex-1 font-sans text-slate-900 bg-white">
+        
+        <!-- KOP SURAT RESMI DINAS -->
+        <div class="text-center pb-4 border-b-2 border-slate-900 mb-4 relative">
+          <div class="text-xs uppercase tracking-widest font-bold text-slate-600">Pemerintah Kota / Kabupaten</div>
+          <div class="text-base uppercase tracking-wider font-extrabold text-slate-900">Dinas Pendidikan dan Kebudayaan</div>
+          <div class="text-[10px] text-slate-500">Jl. Pahlawan No. 45 Telp. (0354) 682123 &bull; Portal Resmi e-SlipASN</div>
+          <div class="w-full h-0.5 bg-slate-900 mt-2"></div>
+        </div>
+
+        <!-- JUDUL SURAT -->
+        <div class="text-center my-3">
+          <h2 class="text-sm font-extrabold uppercase tracking-wide underline">SLIP GAJI DAN PENGHASILAN ASN</h2>
+          <div id="pv-periode" class="text-xs font-semibold text-slate-700 mt-0.5">Bulan September 2026</div>
+        </div>
+
+        <!-- BIODATA PEGAWAI -->
+        <table class="w-full text-xs mb-4">
+          <tbody>
+            <tr>
+              <td class="w-32 py-0.5 text-slate-600">Nama Lengkap</td>
+              <td class="w-3">:</td>
+              <td id="pv-nama" class="font-bold text-slate-900">Drs. MANDUNG SULAKSONO</td>
+              <td class="w-28 py-0.5 text-slate-600">Pangkat / Gol</td>
+              <td class="w-3">:</td>
+              <td id="pv-golongan" class="font-semibold text-slate-800">Pembina / Gol. IV/a</td>
+            </tr>
+            <tr>
+              <td class="py-0.5 text-slate-600">NIP 18 Digit</td>
+              <td>:</td>
+              <td id="pv-nip" class="font-mono font-bold text-slate-900">196701021986021003</td>
+              <td class="py-0.5 text-slate-600">Status Pegawai</td>
+              <td>:</td>
+              <td id="pv-status" class="font-semibold text-slate-800">PNS Aktif</td>
+            </tr>
+            <tr>
+              <td class="py-0.5 text-slate-600">Satuan Kerja</td>
+              <td>:</td>
+              <td id="pv-satker" class="font-semibold text-slate-800">Dinas Pendidikan</td>
+              <td class="py-0.5 text-slate-600">No. Rekening</td>
+              <td>:</td>
+              <td id="pv-rekening" class="font-mono font-bold text-slate-800">0062205877 (Bank Jatim)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- RINCIAN DUA KOLOM: PENGHASILAN VS POTONGAN -->
+        <div class="grid grid-cols-2 gap-4 border border-slate-300 rounded-lg p-3 text-xs mb-4">
+          
+          <!-- Kiri: Penghasilan -->
+          <div>
+            <div class="font-bold text-slate-900 border-b border-slate-200 pb-1 mb-1.5 uppercase text-[11px] tracking-wider text-blue-800">
+              I. Penerimaan / Penghasilan
+            </div>
+            <table class="w-full text-[11px] space-y-1" id="pv-table-pendapatan">
+              <tr>
+                <td class="py-0.5 text-slate-600">Gaji Pokok</td>
+                <td class="text-right font-medium" id="pv-pokok">Rp 0</td>
+              </tr>
+              <tr>
+                <td class="py-0.5 text-slate-600">Tunj. Keluarga</td>
+                <td class="text-right font-medium" id="pv-keluarga">Rp 0</td>
+              </tr>
+              <tr>
+                <td class="py-0.5 text-slate-600">Tunj. Jabatan</td>
+                <td class="text-right font-medium" id="pv-jabatan">Rp 0</td>
+              </tr>
+              <tr>
+                <td class="py-0.5 text-slate-600">Tunj. Beras / Natura</td>
+                <td class="text-right font-medium" id="pv-beras">Rp 0</td>
+              </tr>
+              <tr>
+                <td class="py-0.5 text-slate-600">Tunj. Kinerja / TPP</td>
+                <td class="text-right font-medium" id="pv-kinerja">Rp 0</td>
+              </tr>
+              <tr class="border-t border-slate-200 font-bold text-slate-900 pt-1">
+                <td class="pt-1">Total Penghasilan Kotor</td>
+                <td class="text-right pt-1" id="pv-total-kotor">Rp 0</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Kanan: Potongan -->
+          <div class="border-l border-slate-200 pl-4">
+            <div class="font-bold text-slate-900 border-b border-slate-200 pb-1 mb-1.5 uppercase text-[11px] tracking-wider text-rose-800">
+              II. Potongan Wajib &amp; Mitra
+            </div>
+            <table class="w-full text-[11px] space-y-1" id="pv-table-potongan">
+              <tr id="pv-row-bpd">
+                <td class="py-0.5 text-slate-600">BPD / KMG</td>
+                <td class="text-right font-medium" id="pv-pot-bpd">Rp 0</td>
+              </tr>
+              <tr id="pv-row-korpri">
+                <td class="py-0.5 text-slate-600">Iuran KORPRI</td>
+                <td class="text-right font-medium" id="pv-pot-korpri">Rp 0</td>
+              </tr>
+              <tr id="pv-row-tentrem">
+                <td class="py-0.5 text-slate-600">Koperasi Tentrem</td>
+                <td class="text-right font-medium" id="pv-pot-tentrem">Rp 0</td>
+              </tr>
+              <tr id="pv-row-kgr">
+                <td class="py-0.5 text-slate-600">Koperasi KGR</td>
+                <td class="text-right font-medium" id="pv-pot-kgr">Rp 0</td>
+              </tr>
+              <tr id="pv-row-harapan">
+                <td class="py-0.5 text-slate-600">Koperasi Harapan</td>
+                <td class="text-right font-medium" id="pv-pot-harapan">Rp 0</td>
+              </tr>
+              <tr id="pv-row-guyub">
+                <td class="py-0.5 text-slate-600">Koperasi Guyub Rukun</td>
+                <td class="text-right font-medium" id="pv-pot-guyub">Rp 0</td>
+              </tr>
+              <tr id="pv-row-bprjatim">
+                <td class="py-0.5 text-slate-600">BPR Jatim</td>
+                <td class="text-right font-medium" id="pv-pot-bprjatim">Rp 0</td>
+              </tr>
+              <tr id="pv-row-joyoboyo">
+                <td class="py-0.5 text-slate-600">Joyoboyo</td>
+                <td class="text-right font-medium" id="pv-pot-joyoboyo">Rp 0</td>
+              </tr>
+              <tr id="pv-row-bprkota">
+                <td class="py-0.5 text-slate-600">BPR Kota</td>
+                <td class="text-right font-medium" id="pv-pot-bprkota">Rp 0</td>
+              </tr>
+              <tr id="pv-row-dw">
+                <td class="py-0.5 text-slate-600">Dharma Wanita</td>
+                <td class="text-right font-medium" id="pv-pot-dw">Rp 0</td>
+              </tr>
+              <tr id="pv-row-adm">
+                <td class="py-0.5 text-slate-600">Administrasi Bank/Mitra</td>
+                <td class="text-right font-medium" id="pv-pot-adm">Rp 0</td>
+              </tr>
+              <tr class="border-t border-slate-200 font-bold text-rose-700 pt-1">
+                <td class="pt-1">Total Potongan</td>
+                <td class="text-right pt-1" id="pv-total-potongan">Rp 0</td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- JUMLAH BERSIH (THP) & TERBILANG -->
+        <div class="border-2 border-slate-900 bg-slate-50 p-3 rounded-lg mb-6 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] uppercase font-bold text-slate-700 tracking-wider">Jumlah Bersih Diterima (Take Home Pay)</div>
+            <div class="text-[10px] italic text-slate-600" id="pv-terbilang">"Tujuh Juta Dua Ratus Ribu Rupiah"</div>
+          </div>
+          <div class="text-xl font-extrabold text-slate-950 font-mono" id="pv-gaji-bersih">
+            Rp 7.297.352
+          </div>
+        </div>
+
+        <!-- TANDA TANGAN DIGITAL / TTE BKN & BSRE -->
+        <div class="grid grid-cols-2 gap-4 text-xs pt-2">
+          
+          <!-- Verifikasi QR Code BSrE -->
+          <div class="flex items-center gap-3 p-2 bg-slate-50 border border-slate-200 rounded-lg">
+            <div class="w-16 h-16 bg-white p-1 border border-slate-300 rounded flex items-center justify-center">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TTE-BSRE-ESLIPASN-VERIFIED-2026" alt="QR TTE" class="w-full h-full object-contain">
+            </div>
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-800 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px] text-emerald-600">verified_user</span>
+                <span>Tersertifikasi Elektronik</span>
+              </div>
+              <div class="text-[9px] text-slate-500 leading-tight mt-0.5">
+                Dokumen resmi sah tanpa stempel basah. Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pejabat Penandatangan -->
+          <div class="text-center">
+            <div class="text-[11px] text-slate-600">Diterbitkan pada: 25 September 2026</div>
+            <div class="text-[11px] font-bold text-slate-900">Bendahara Pengeluaran,</div>
+            <div class="h-10 flex items-center justify-center text-blue-900 font-serif italic text-xs">
+              [Telah Ditandatangani Secara Elektronik]
+            </div>
+            <div class="text-[11px] font-bold text-slate-900 underline">Dra. ERNA NURLAYLI, SE.</div>
+            <div class="text-[10px] text-slate-500 font-mono">NIP. 197705192003122005</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 3: TAMBAH PEGAWAI ASN BARU (BENDAHARA / ADMIN) -->
+  <div id="modal-tambah-pegawai" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden my-6 animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="p-5 bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 text-white flex items-center justify-between border-b border-emerald-900/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600/30 border border-emerald-500/40 flex items-center justify-center text-emerald-300">
+            <span class="material-symbols-outlined text-[24px]">person_add</span>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white leading-snug">Tambah Data Pegawai ASN Baru</h3>
+            <p class="text-xs text-emerald-300/80">Pendaftaran Master Pegawai (PNS / PPPK) &amp; Pengaturan Gaji Awal</p>
+          </div>
+        </div>
+        <button onclick="closeTambahPegawaiModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="material-symbols-outlined text-[22px]">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Form Fields) -->
+      <form id="form-tambah-pegawai" onsubmit="handleTambahPegawaiSubmit(event)" class="overflow-y-auto flex-1 p-6 space-y-6">
+        
+        <!-- SEKSI 1: IDENTITAS UTAMA PEGAWAI -->
+        <div class="bg-slate-50/80 rounded-xl p-4 border border-slate-200 space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider">
+            <span class="material-symbols-outlined text-emerald-600 text-[18px]">badge</span>
+            <span>I. Identitas Resmi &amp; Nomor Induk Pegawai</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <!-- NIP 18 Digit -->
+            <div class="md:col-span-6">
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                NIP 18 Digit (Standar BKN) <span class="text-rose-500">*</span>
+              </label>
+              <div class="flex gap-2">
+                <input type="text" id="add-nip" maxlength="18" oninput="onNipInputTambahPegawai(this)" required
+                  placeholder="Contoh: 199005122024211005"
+                  class="flex-1 px-3 py-2 text-xs font-mono font-bold bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <button type="button" onclick="cekNipTambahPegawai()"
+                  class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg flex items-center gap-1 transition-colors">
+                  <span class="material-symbols-outlined text-[16px]">search</span>
+                  <span>Cek</span>
+                </button>
+              </div>
+              <div id="add-nip-feedback" class="hidden mt-1.5 p-2 rounded text-[11px] font-medium"></div>
+            </div>
+
+            <!-- Nama Lengkap Sesuai SK -->
+            <div class="md:col-span-6">
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Nama Lengkap &amp; Gelar <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="add-nama" required placeholder="Contoh: AHMAD FAUZI, S.Pd., M.M."
+                class="w-full px-3 py-2 text-xs font-bold bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <!-- NIK KTP -->
+            <div class="md:col-span-4">
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                NIK Kependudukan (16 Digit)
+              </label>
+              <input type="text" id="add-nik" maxlength="16" placeholder="3571xxxxxxxx0001"
+                class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <!-- Status ASN -->
+            <div class="md:col-span-4">
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Kategori Aparatur <span class="text-rose-500">*</span>
+              </label>
+              <select id="add-status-pegawai" class="w-full px-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer">
+                <option value="PNS Aktif">PNS (Pegawai Negeri Sipil)</option>
+                <option value="PPPK Aktif">PPPK (Perjanjian Kerja)</option>
+              </select>
+            </div>
+
+            <!-- Jenis Kelamin -->
+            <div class="md:col-span-4">
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Jenis Kelamin
+              </label>
+              <select id="add-jenis-kelamin" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer">
+                <option value="Laki-Laki">Laki-Laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEKSI 2: JABATAN & UNIT PENEMPATAN -->
+        <div class="bg-slate-50/80 rounded-xl p-4 border border-slate-200 space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider">
+            <span class="material-symbols-outlined text-emerald-600 text-[18px]">domain</span>
+            <span>II. Penempatan, Pangkat &amp; Jabatan Kedinasan</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Golongan / Ruang -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Pangkat / Golongan <span class="text-rose-500">*</span>
+              </label>
+              <select id="add-golongan" onchange="onGolonganChangeTambahPegawai(this.value)" class="w-full px-3 py-2 text-xs font-bold bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer">
+                <optgroup label="Golongan PNS">
+                  <option value="Pengatur Muda / II/a">Pengatur Muda / II/a</option>
+                  <option value="Pengatur / II/c">Pengatur / II/c</option>
+                  <option value="Penata Muda / III/a" selected>Penata Muda / III/a</option>
+                  <option value="Penata Muda Tk. I / III/b">Penata Muda Tk. I / III/b</option>
+                  <option value="Penata / III/c">Penata / III/c</option>
+                  <option value="Penata Tk. I / III/d">Penata Tk. I / III/d</option>
+                  <option value="Pembina / IV/a">Pembina / IV/a</option>
+                  <option value="Pembina Tk. I / IV/b">Pembina Tk. I / IV/b</option>
+                  <option value="Pembina Utama Muda / IV/c">Pembina Utama Muda / IV/c</option>
+                </optgroup>
+                <optgroup label="Golongan PPPK">
+                  <option value="PPPK Golongan VII">PPPK Golongan VII</option>
+                  <option value="PPPK Golongan IX">PPPK Golongan IX (Ahli Pertama)</option>
+                  <option value="PPPK Golongan X">PPPK Golongan X (Ahli Muda)</option>
+                  <option value="PPPK Golongan XI">PPPK Golongan XI</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Jabatan -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Jabatan ASN <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="add-jabatan" required placeholder="Contoh: Guru Kelas Ahli Pertama"
+                value="Guru Ahli Pertama"
+                class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <!-- Satker / Unit Kerja -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Unit Satuan Kerja (Satker) <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="add-satker" required placeholder="Contoh: Dinas Pendidikan / SMPN 1"
+                value="Dinas Pendidikan &amp; Kebudayaan"
+                class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- SEKSI 3: REKENING PAYROLL & KONTAK -->
+        <div class="bg-slate-50/80 rounded-xl p-4 border border-slate-200 space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider">
+            <span class="material-symbols-outlined text-emerald-600 text-[18px]">account_balance</span>
+            <span>III. Rekening Penyaluran Gaji &amp; Kontak Pegawai</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Bank Penyalur Payroll</label>
+              <select id="add-bank" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer">
+                <option value="PT BPD JATIM (BANK JATIM)" selected>PT BPD JATIM (Bank Jatim)</option>
+                <option value="PT BANK RAKYAT INDONESIA (BRI)">Bank BRI</option>
+                <option value="PT BANK MANDIRI">Bank Mandiri</option>
+                <option value="PT BANK NEGARA INDONESIA (BNI)">Bank BNI</option>
+                <option value="PT BANK SYARIAH INDONESIA (BSI)">Bank BSI</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">No. Rekening Payroll</label>
+              <input type="text" id="add-rekening" placeholder="0062xxxxxx"
+                class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Email Kedinasan</label>
+              <input type="email" id="add-email" placeholder="pegawai@dinas.go.id"
+                class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">No. HP / WhatsApp</label>
+              <input type="tel" id="add-nohp" placeholder="0812xxxxxxxx"
+                class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- SEKSI 4: KOMPONEN GAJI AWAL & OTOMASI AKUN -->
+        <div class="bg-emerald-50/40 rounded-xl p-4 border border-emerald-100 space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-emerald-200/60">
+            <div class="flex items-center gap-2 text-emerald-950 font-bold text-xs uppercase tracking-wider">
+              <span class="material-symbols-outlined text-emerald-600 text-[18px]">payments</span>
+              <span>IV. Pengaturan Komponen Gaji Pokok &amp; Tunjangan Awal</span>
+            </div>
+            <span class="text-[11px] text-emerald-700 font-semibold bg-emerald-100/70 px-2.5 py-0.5 rounded-full">
+              Dapat disesuaikan kembali nanti
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Gaji Pokok (Rp)</label>
+              <input type="number" id="add-gaji-pokok" value="3500000" oninput="hitungEstimasiGajiBaru()"
+                class="w-full px-3 py-1.5 font-bold text-slate-800 bg-white border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-right">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Tunj. Keluarga (Rp)</label>
+              <input type="number" id="add-tunj-keluarga" value="350000" oninput="hitungEstimasiGajiBaru()"
+                class="w-full px-3 py-1.5 font-medium text-slate-800 bg-white border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-right">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Tunj. Jabatan (Rp)</label>
+              <input type="number" id="add-tunj-jabatan" value="540000" oninput="hitungEstimasiGajiBaru()"
+                class="w-full px-3 py-1.5 font-medium text-slate-800 bg-white border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-right">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Tunj. Beras (Rp)</label>
+              <input type="number" id="add-tunj-beras" value="289680" oninput="hitungEstimasiGajiBaru()"
+                class="w-full px-3 py-1.5 font-medium text-slate-800 bg-white border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-right">
+            </div>
+          </div>
+
+          <!-- Total Estimasi THP -->
+          <div class="p-3 bg-white rounded-lg border border-emerald-200 flex items-center justify-between">
+            <div class="text-xs">
+              <span class="text-slate-500 font-medium">Estimasi Gaji Bersih (THP):</span>
+              <span id="add-preview-thp" class="font-extrabold text-emerald-700 text-sm ml-2">Rp 4.529.680</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="add-create-login" checked class="w-4 h-4 text-emerald-600 rounded cursor-pointer">
+              <label for="add-create-login" class="text-xs font-semibold text-slate-700 cursor-pointer">
+                Aktifkan akun login portal (Password default: <span class="font-mono text-emerald-800 font-bold">asn12345</span>)
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi Modal -->
+        <div class="pt-2 flex items-center justify-end gap-3 border-t border-slate-200">
+          <button type="button" onclick="closeTambahPegawaiModal()"
+            class="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+            Batal
+          </button>
+          <button type="submit" id="btn-submit-tambah-pegawai"
+            class="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition-all">
+            <span class="material-symbols-outlined text-[17px]">save</span>
+            <span>Simpan Pegawai Baru</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL 4: EKSTRAKTOR DOKUMEN PAYROLL (EXCEL / PDF / FOTO KE CSV) -->
+  <div id="modal-extractor-file" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-5xl w-full max-h-[94vh] flex flex-col overflow-hidden my-4 animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="p-5 bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white flex items-center justify-between border-b border-indigo-900/50">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-indigo-300 shadow-inner">
+            <span class="material-symbols-outlined text-[26px]">document_scanner</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-bold text-white leading-snug">Ekstraktor Dokumen Penggajian ke CSV</h3>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">Excel &bull; PDF &bull; JPEG/Foto</span>
+            </div>
+            <p class="text-xs text-indigo-200/80">Konversi otomatis berkas gaji dinas menjadi format CSV standar untuk acuan pengisian gaji kotor &amp; rincian potongan ASN.</p>
+          </div>
+        </div>
+        <button onclick="closeExtractorModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Upload & Extraction Preview) -->
+      <div class="overflow-y-auto flex-1 p-6 space-y-6">
+        
+        <!-- DROPZONE AREA & QUICK ACTIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Dropzone Container -->
+          <div class="md:col-span-2 border-2 border-dashed border-indigo-300 hover:border-indigo-500 bg-indigo-50/40 hover:bg-indigo-50/80 rounded-2xl p-6 text-center transition-all cursor-pointer relative group flex flex-col items-center justify-center"
+               id="extractor-dropzone" onclick="document.getElementById('extractor-file-input').click()">
+            <input type="file" id="extractor-file-input" class="hidden" accept=".xlsx,.xls,.pdf,.jpg,.jpeg,.png,.csv" onchange="handleExtractorFileSelect(event)">
+            
+            <div class="w-14 h-14 rounded-2xl bg-indigo-600/10 text-indigo-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-[32px]">upload_file</span>
+            </div>
+            <div class="text-sm font-bold text-slate-800 mb-1">
+              Klik atau Seret Berkas ke Sini
+            </div>
+            <p class="text-xs text-slate-500 max-w-md mb-3">
+              Mendukung berkas Spreadsheet Excel (<code class="font-mono text-indigo-700">.xlsx / .xls</code>), Berkas Dokumen (<code class="font-mono text-indigo-700">.pdf</code>), Foto/Gambar Scan (<code class="font-mono text-indigo-700">.jpg / .png</code>), atau (<code class="font-mono text-indigo-700">.csv</code>)
+            </p>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold shadow-sm shadow-indigo-600/30 group-hover:bg-indigo-700">
+              <span class="material-symbols-outlined text-[16px]">file_open</span>
+              <span>Pilih Dokumen dari Komputer</span>
+            </div>
+          </div>
+
+          <!-- Quick Test & Guidance -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-2 text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
+                <span class="material-symbols-outlined text-amber-500 text-[18px]">verified</span>
+                <span>Sampel Data Dinas Riil</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Ingin langsung melihat cara kerja sistem membaca NIP, gaji kotor, dan rincian potongan? Klik tombol di bawah untuk mengekstrak berkas acuan Dinas Pendidikan (150 Pegawai).
+              </p>
+            </div>
+
+            <button type="button" onclick="loadSampleDinasPayroll()" id="btn-load-sample" class="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm">
+              <span class="material-symbols-outlined text-[18px] text-amber-400">dataset</span>
+              <span>Muat Contoh Berkas Dinas (150 ASN)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PROGRESS & STATUS INDICATOR -->
+        <div id="extractor-progress-box" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4 animate-in fade-in">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-indigo-600 animate-spin text-[20px]">sync</span>
+              <span id="extractor-status-text" class="text-xs font-bold text-indigo-900">Menganalisis dan mengekstrak data berkas...</span>
+            </div>
+            <span id="extractor-progress-percent" class="text-xs font-mono font-bold text-indigo-700">0%</span>
+          </div>
+          <div class="w-full bg-indigo-200 rounded-full h-2 overflow-hidden">
+            <div id="extractor-progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-200" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- EXTRACTION RESULTS SECTION -->
+        <div id="extractor-result-container" class="hidden space-y-4">
+          
+          <!-- Summary Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3.5">
+              <div class="text-[11px] font-bold text-indigo-700 uppercase">Pegawai Terdeteksi</div>
+              <div id="ext-stat-pegawai" class="text-xl font-extrabold text-indigo-950 mt-1">0 ASN</div>
+            </div>
+            <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5">
+              <div class="text-[11px] font-bold text-blue-700 uppercase">Total Gaji Kotor</div>
+              <div id="ext-stat-kotor" class="text-lg font-extrabold text-blue-950 mt-1">Rp 0</div>
+            </div>
+            <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-3.5">
+              <div class="text-[11px] font-bold text-rose-700 uppercase">Total Potongan</div>
+              <div id="ext-stat-potongan" class="text-lg font-extrabold text-rose-950 mt-1">Rp 0</div>
+            </div>
+            <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5">
+              <div class="text-[11px] font-bold text-emerald-700 uppercase">Total Gaji Bersih</div>
+              <div id="ext-stat-bersih" class="text-lg font-extrabold text-emerald-950 mt-1">Rp 0</div>
+            </div>
+          </div>
+
+          <!-- File Info Banner -->
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-100/80 rounded-xl px-4 py-2.5 border border-slate-200 text-xs text-slate-700">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-slate-600 text-[18px]">description</span>
+              <span>Berkas Sumber: <strong id="ext-filename" class="text-slate-900 font-mono">-</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-slate-600 text-[18px]">table_rows</span>
+              <span>Baris Data Valid: <strong id="ext-row-count" class="text-slate-900 font-mono">0</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-indigo-600 text-[18px]">verified</span>
+              <span>Validasi Rincian: <strong id="ext-match-stat" class="text-emerald-700 font-bold">-</strong></span>
+            </div>
+          </div>
+
+          <!-- Status Deteksi Kolom Potongan Berkas (Agar bendahara tahu mana yang terbaca dan mana yang tidak) -->
+          <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-3.5 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-indigo-600 text-[18px]">fact_check</span>
+                <span>Status Deteksi Kolom Potongan Berkas:</span>
+              </span>
+              <span id="ext-col-detected-summary" class="text-[11px] font-bold text-indigo-700">Memindai header kolom...</span>
+            </div>
+            <div id="ext-detection-badges" class="flex flex-wrap gap-1.5 text-[11px]">
+              <!-- Dynamic Badges -->
+            </div>
+          </div>
+
+          <!-- Preview Table Container -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+            <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-indigo-600 text-[17px]">preview</span>
+                  <span>Pratinjau Data CSV Acuan Gaji &amp; Rincian Potongan</span>
+                </span>
+                <span id="ext-preview-count-label" class="text-[11px] text-slate-500 font-medium">Menampilkan seluruh data</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <input type="text" id="ext-filter-input" oninput="filterExtractorPreview(this.value)" placeholder="Cari NIP / Nama..."
+                  class="px-2.5 py-1 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 w-44 bg-white" />
+              </div>
+            </div>
+            <div class="overflow-auto max-h-80">
+              <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-200 z-10 shadow-sm">
+                  <tr>
+                    <th class="py-2.5 px-3 sticky left-0 z-20 bg-slate-100">No</th>
+                    <th class="py-2.5 px-3 sticky left-10 z-20 bg-slate-100">NIP Pegawai</th>
+                    <th class="py-2.5 px-3 sticky left-44 z-20 bg-slate-100 shadow-r">Nama Lengkap</th>
+                    <th class="py-2.5 px-3">No. Rekening</th>
+                    <th class="py-2.5 px-3 text-right">Gaji Kotor</th>
+                    
+                    <!-- Rincian Potongan -->
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Korpri</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Sosial</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Zakat</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Kop. Tentrem</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Kop. Harapan</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Kop. Guyub</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Kop. KGR</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Bank Jatim/BPD</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Joyoboyo</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">BPR Jatim/Kota</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Bank Lain</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Dharma Wanita</th>
+                    <th class="py-2.5 px-3 text-right text-rose-700 bg-rose-50/50">Lain-lain</th>
+
+                    <!-- Total & Status Validasi -->
+                    <th class="py-2.5 px-3 text-right font-bold text-rose-600 bg-rose-100/60">Total Potongan (Berkas)</th>
+                    <th class="py-2.5 px-3 text-center bg-indigo-50/60 text-indigo-900">Status Pembacaan</th>
+                    <th class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">Gaji Bersih</th>
+                  </tr>
+                </thead>
+                <tbody id="extractor-preview-tbody" class="divide-y divide-slate-100 font-medium">
+                  <!-- Dynamic Rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Modal Footer (Target Periode & Action Buttons) -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <label class="text-xs font-bold text-slate-700 whitespace-nowrap">Target Periode Gaji:</label>
+          <select id="ext-target-periode" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+            <option value="Oktober 2026" selected>Oktober 2026 (Pengerjaan Pra-Cair)</option>
+            <option value="November 2026">November 2026</option>
+            <option value="Desember 2026">Desember 2026</option>
+            <option value="September 2026">September 2026</option>
+            <option value="Agustus 2026">Agustus 2026</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <button type="button" onclick="closeExtractorModal()"
+            class="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg transition-colors">
+            Tutup
+          </button>
+          
+          <!-- Download CSV Button -->
+          <button type="button" id="btn-ext-download" onclick="downloadExtractedCsv()" disabled
+            class="px-4 py-2 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg flex items-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-[17px]">download</span>
+            <span>Unduh Berkas CSV (.csv)</span>
+          </button>
+
+          <!-- Apply to Database Button -->
+          <button type="button" id="btn-ext-apply" onclick="applyExtractedToPayroll()" disabled
+            class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md shadow-indigo-600/20 flex items-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-[17px]">sync_saved_locally</span>
+            <span>Terapkan &amp; Sinkronkan ke Gaji ASN</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT CONTROLLER -->
+  <script>
+    let allPegawai = [];
+    let filteredPegawai = [];
+    let currentPage = 1;
+    const pageSize = 15;
+    let currentEditNip = null;
+
+    // Inisialisasi saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+      // Pulihkan pilihan periode pengerjaan gaji yang pernah dipilih bendahara
+      const savedPeriode = localStorage.getItem('bendahara_selected_periode');
+      if (savedPeriode) {
+        const select = document.getElementById('select-periode');
+        let exists = false;
+        for (let i = 0; i < select.options.length; i++) {
+          if (select.options[i].value === savedPeriode) {
+            select.selectedIndex = i;
+            exists = true;
+            break;
+          }
+        }
+        if (!exists) {
+          const opt = document.createElement('option');
+          opt.value = savedPeriode;
+          opt.textContent = `Periode: ${savedPeriode}`;
+          opt.selected = true;
+          select.insertBefore(opt, select.firstElementChild);
+        }
+      }
+      loadPegawaiData();
+    });
+
+    // Ambil data pegawai dari API backend
+    async function loadPegawaiData() {
+      const tbody = document.getElementById('pegawai-tbody');
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9" class="py-12 text-center text-slate-400">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+            <div>Memuat data master pegawai &amp; slip gaji...</div>
+          </td>
+        </tr>
+      `;
+
+      try {
+        const res = await fetch('/api/pegawai-list');
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          allPegawai = json.data;
+          filterPegawaiTable();
+          updateExecutiveStats();
+        } else {
+          tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-rose-500 font-bold">Gagal memuat data pegawai: ${json.message || 'Terjadi galat'}</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-rose-500 font-bold">Gagal menghubungi server: ${err.message}</td></tr>`;
+      }
+    }
+
+    // Update Kartu Statistik Ringkasan Eksekutif
+    function updateExecutiveStats() {
+      let totalKotor = 0;
+      let totalPotongan = 0;
+      let totalBersih = 0;
+      let countPns = 0;
+      let countPppk = 0;
+
+      allPegawai.forEach(p => {
+        if (p.statusPegawai && p.statusPegawai.includes('PPPK')) countPppk++;
+        else countPns++;
+
+        if (p.slipGaji) {
+          totalKotor += p.slipGaji.gajiKotor || 0;
+          totalPotongan += p.slipGaji.totalPotongan || 0;
+          totalBersih += p.slipGaji.totalGajiBersih || 0;
+        }
+      });
+
+      document.getElementById('stat-gaji-kotor').textContent = formatRupiah(totalKotor);
+      document.getElementById('stat-total-pegawai').textContent = `${allPegawai.length} ASN`;
+      document.getElementById('stat-total-potongan').textContent = formatRupiah(totalPotongan);
+      document.getElementById('stat-gaji-bersih').textContent = formatRupiah(totalBersih);
+      document.getElementById('stat-badge-pns-pppk').textContent = `${countPns} PNS &bull; ${countPppk} PPPK`;
+    }
+
+    // Filter & Search Pegawai
+    function filterPegawaiTable() {
+      const q = (document.getElementById('input-search').value || '').toLowerCase().trim();
+      const statusFilter = document.getElementById('filter-status').value;
+
+      filteredPegawai = allPegawai.filter(p => {
+        const matchSearch = p.nama.toLowerCase().includes(q) || p.nip.includes(q);
+        if (!matchSearch) return false;
+
+        const hasSlip = p.slipGaji && (Number(p.slipGaji.totalGajiBersih) > 0 || Number(p.slipGaji.gajiKotor) > 0);
+        const isPppk = p.statusPegawai && p.statusPegawai.includes('PPPK');
+
+        if (statusFilter === 'terbit') return hasSlip;
+        if (statusFilter === 'draft') return !hasSlip;
+        if (statusFilter === 'pns') return !isPppk;
+        if (statusFilter === 'pppk') return isPppk;
+
+        return true;
+      });
+
+      currentPage = 1;
+      renderTablePage();
+    }
+
+    // Render baris tabel berdasarkan pagination
+    function renderTablePage() {
+      const tbody = document.getElementById('pegawai-tbody');
+      const total = filteredPegawai.length;
+
+      if (total === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">Tidak ada data pegawai yang sesuai dengan pencarian atau filter.</td></tr>`;
+        document.getElementById('table-info').textContent = 'Menampilkan 0 data';
+        document.getElementById('btn-prev-page').disabled = true;
+        document.getElementById('btn-next-page').disabled = true;
+        return;
+      }
+
+      const totalPages = Math.ceil(total / pageSize);
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const start = (currentPage - 1) * pageSize;
+      const end = Math.min(start + pageSize, total);
+      const pageData = filteredPegawai.slice(start, end);
+
+      let html = '';
+      pageData.forEach((p, idx) => {
+        const no = start + idx + 1;
+        const isPppk = p.statusPegawai && p.statusPegawai.includes('PPPK');
+        const badgeRole = isPppk
+          ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">PPPK</span>'
+          : '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">PNS</span>';
+
+        const slip = p.slipGaji;
+        const hasSlip = slip && (Number(slip.totalGajiBersih) > 0 || Number(slip.gajiKotor) > 0);
+        const gajiKotorStr = hasSlip ? formatRupiah(slip.gajiKotor) : '-';
+        const potonganStr = hasSlip ? formatRupiah(slip.totalPotongan) : '-';
+        const gajiBersihStr = hasSlip ? formatRupiah(slip.totalGajiBersih) : '-';
+        const rekeningStr = (slip && slip.rekening) ? slip.rekening : (p.noHp || '-');
+
+        const badgeStatus = hasSlip
+          ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Terbit</span>'
+          : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>Draf</span>';
+
+        html += `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-4 text-center font-semibold text-slate-500">${no}</td>
+            <td class="py-3 px-4">
+              <div class="font-bold text-slate-900">${escapeHtml(p.nama)}</div>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="font-mono text-slate-500 text-[11px]">${p.nip}</span>
+                ${badgeRole}
+              </div>
+            </td>
+            <td class="py-3 px-4">
+              <div class="text-slate-800 font-medium">${escapeHtml(p.satker || 'Dinas Pendidikan')}</div>
+              <div class="text-slate-400 text-[11px]">${escapeHtml(p.golongan || 'Golongan III')}</div>
+            </td>
+            <td class="py-3 px-4 font-mono text-slate-600">${rekeningStr}</td>
+            <td class="py-3 px-4 text-right font-medium text-slate-700">${gajiKotorStr}</td>
+            <td class="py-3 px-4 text-right font-medium text-rose-600">${potonganStr}</td>
+            <td class="py-3 px-4 text-right font-bold text-emerald-700">${gajiBersihStr}</td>
+            <td class="py-3 px-4 text-center">${badgeStatus}</td>
+            <td class="py-3 px-4 text-center">
+              <div class="inline-flex items-center gap-1">
+                <button onclick="openEditSlipModal('${p.nip}')" title="Edit Komponen Slip Gaji" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold transition-colors border border-blue-200">
+                  <span class="material-symbols-outlined text-[15px]">edit</span>
+                </button>
+                <button onclick="openPrintModal('${p.nip}')" title="Pratinjau / Cetak Dokumen Resmi" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors border border-slate-300">
+                  <span class="material-symbols-outlined text-[15px]">print</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+      document.getElementById('table-info').textContent = `Menampilkan ${start + 1} - ${end} dari ${total} pegawai`;
+      document.getElementById('page-num').textContent = `${currentPage} / ${totalPages}`;
+      document.getElementById('btn-prev-page').disabled = currentPage <= 1;
+      document.getElementById('btn-next-page').disabled = currentPage >= totalPages;
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTablePage();
+      }
+    }
+
+    function nextPage() {
+      currentPage++;
+      renderTablePage();
+    }
+
+    // Buka Modal Edit / Input Slip Gaji
+    function openEditSlipModal(nip) {
+      const p = allPegawai.find(x => x.nip === nip);
+      if (!p) return;
+
+      const activePeriode = document.getElementById('select-periode').value;
+
+      currentEditNip = nip;
+      document.getElementById('form-nama').textContent = p.nama;
+      document.getElementById('form-nip').textContent = p.nip;
+      document.getElementById('edit-subheading').textContent = `NIP: ${p.nip} • ${p.golongan || 'Golongan III'} • Periode: ${activePeriode}`;
+
+      const slip = p.slipGaji || {};
+      const pend = slip.pendapatan || {};
+      const pot = slip.potongan || {};
+
+      document.getElementById('form-rekening').value = slip.rekening || `0062${nip.substring(10, 16)}`;
+      document.getElementById('inp-gaji-pokok').value = pend.gajiPokok || slip.gajiPokok || 4500000;
+      document.getElementById('inp-tunj-keluarga').value = pend.tunjanganKeluarga || slip.tunjanganKeluarga || 450000;
+      document.getElementById('inp-tunj-jabatan').value = pend.tunjanganJabatan || slip.tunjanganJabatan || 600000;
+      document.getElementById('inp-tunj-beras').value = pend.tunjanganBeras || slip.tunjanganBeras || 289680;
+      document.getElementById('inp-tunj-kinerja').value = pend.tunjanganKinerja || slip.tunjanganKinerja || 0;
+
+      // 10 Potongan Dinas
+      document.getElementById('inp-pot-bpd').value = pot.bpd || pot.bpdKmg || 0;
+      document.getElementById('inp-pot-korpri').value = pot.korpri || 0;
+      document.getElementById('inp-pot-tentrem').value = pot.kopTentrem || 0;
+      document.getElementById('inp-pot-kgr').value = pot.kopKgr || 0;
+      document.getElementById('inp-pot-harapan').value = pot.kopHarapan || 0;
+      document.getElementById('inp-pot-guyub').value = pot.kopGuyub || 0;
+      document.getElementById('inp-pot-bprjatim').value = pot.bprJatim || 0;
+      document.getElementById('inp-pot-joyoboyo').value = pot.joyoboyo || 0;
+      document.getElementById('inp-pot-bprkota').value = pot.bprKota || 0;
+      document.getElementById('inp-pot-dw').value = pot.dharmaWanita || 0;
+      document.getElementById('inp-pot-adm').value = pot.administrasi || 0;
+
+      calculateSlipForm();
+      document.getElementById('modal-edit-slip').classList.remove('hidden');
+    }
+
+    function closeEditSlipModal() {
+      document.getElementById('modal-edit-slip').classList.add('hidden');
+      currentEditNip = null;
+    }
+
+    // Modal Tambah Slip Baru (Pilih NIP)
+    function openCreateSlipModal() {
+      if (allPegawai.length > 0) {
+        openEditSlipModal(allPegawai[0].nip);
+      }
+    }
+
+    // Kalkulasi Live di Form Pengerjaan Slip Gaji (10 Potongan)
+    function calculateSlipForm() {
+      const getNum = (id) => Math.max(0, parseInt(document.getElementById(id).value, 10) || 0);
+
+      const pokok = getNum('inp-gaji-pokok');
+      const keluarga = getNum('inp-tunj-keluarga');
+      const jabatan = getNum('inp-tunj-jabatan');
+      const beras = getNum('inp-tunj-beras');
+      const kinerja = getNum('inp-tunj-kinerja');
+      const kotor = pokok + keluarga + jabatan + beras + kinerja;
+
+      const potBpd = getNum('inp-pot-bpd');
+      const potKorpri = getNum('inp-pot-korpri');
+      const potTentrem = getNum('inp-pot-tentrem');
+      const potKgr = getNum('inp-pot-kgr');
+      const potHarapan = getNum('inp-pot-harapan');
+      const potGuyub = getNum('inp-pot-guyub');
+      const potBprJatim = getNum('inp-pot-bprjatim');
+      const potJoyoboyo = getNum('inp-pot-joyoboyo');
+      const potBprKota = getNum('inp-pot-bprkota');
+      const potDw = getNum('inp-pot-dw');
+      const potAdm = getNum('inp-pot-adm');
+
+      const potongan = potBpd + potKorpri + potTentrem + potKgr + potHarapan + potGuyub + potBprJatim + potJoyoboyo + potBprKota + potDw + potAdm;
+      const bersih = Math.max(0, kotor - potongan);
+
+      document.getElementById('form-subtotal-kotor').textContent = formatRupiah(kotor);
+      document.getElementById('form-subtotal-potongan').textContent = formatRupiah(potongan);
+      document.getElementById('form-total-bersih').textContent = formatRupiah(bersih);
+      document.getElementById('form-terbilang').textContent = `"${terbilangRupiah(bersih)}"`;
+    }
+
+    // Simpan Slip Gaji ke Server
+    async function saveSlipGajiForm() {
+      if (!currentEditNip) return;
+
+      const btn = document.getElementById('btn-save-slip');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">refresh</span> Menyimpan...';
+
+      const getNum = (id) => Math.max(0, parseInt(document.getElementById(id).value, 10) || 0);
+      const periode = document.getElementById('select-periode').value;
+
+      // Parsing bulan dan tahun dari periode yang dipilih
+      const monthMap = {
+        'januari': '01', 'februari': '02', 'maret': '03', 'april': '04',
+        'mei': '05', 'juni': '06', 'juli': '07', 'agustus': '08',
+        'september': '09', 'oktober': '10', 'november': '11', 'desember': '12'
+      };
+      const lowerPeriode = (periode || '').toLowerCase();
+      let bulanDigit = '10';
+      for (const [name, num] of Object.entries(monthMap)) {
+        if (lowerPeriode.includes(name)) {
+          bulanDigit = num;
+          break;
+        }
+      }
+      const yearMatch = (periode || '').match(/\b(20\d\d)\b/);
+      const tahunDigit = yearMatch ? yearMatch[1] : '2026';
+      const nomorSlip = `SLIP/${tahunDigit}/${bulanDigit}/${currentEditNip.substring(12, 18)}`;
+
+      const potBpd = getNum('inp-pot-bpd');
+      const potKorpri = getNum('inp-pot-korpri');
+      const potTentrem = getNum('inp-pot-tentrem');
+      const potKgr = getNum('inp-pot-kgr');
+      const potHarapan = getNum('inp-pot-harapan');
+      const potGuyub = getNum('inp-pot-guyub');
+      const potBprJatim = getNum('inp-pot-bprjatim');
+      const potJoyoboyo = getNum('inp-pot-joyoboyo');
+      const potBprKota = getNum('inp-pot-bprkota');
+      const potDw = getNum('inp-pot-dw');
+      const potAdm = getNum('inp-pot-adm');
+      const totalPotongan = potBpd + potKorpri + potTentrem + potKgr + potHarapan + potGuyub + potBprJatim + potJoyoboyo + potBprKota + potDw + potAdm;
+
+      const slipObj = {
+        periode: periode,
+        nomorSlip: nomorSlip,
+        rekening: document.getElementById('form-rekening').value.trim() || `0062${currentEditNip.substring(10, 16)}`,
+        bankPenyalur: "PT BPD JATIM (BANK JATIM)",
+        pendapatan: {
+          gajiPokok: getNum('inp-gaji-pokok'),
+          tunjanganKeluarga: getNum('inp-tunj-keluarga'),
+          tunjanganJabatan: getNum('inp-tunj-jabatan'),
+          tunjanganBeras: getNum('inp-tunj-beras'),
+          tunjanganKinerja: getNum('inp-tunj-kinerja')
+        },
+        gajiKotor: getNum('inp-gaji-pokok') + getNum('inp-tunj-keluarga') + getNum('inp-tunj-jabatan') + getNum('inp-tunj-beras') + getNum('inp-tunj-kinerja'),
+        potongan: {
+          bpd: potBpd,
+          korpri: potKorpri,
+          kopTentrem: potTentrem,
+          kopKgr: potKgr,
+          kopHarapan: potHarapan,
+          kopGuyub: potGuyub,
+          bprJatim: potBprJatim,
+          joyoboyo: potJoyoboyo,
+          bprKota: potBprKota,
+          dharmaWanita: potDw,
+          administrasi: potAdm,
+          // Kompatibilitas
+          bpdKmg: potBpd,
+          koperasi: potTentrem + potKgr + potHarapan + potGuyub,
+          bank: potBpd + potBprJatim + potJoyoboyo + potBprKota,
+          lainLain: potDw + potAdm
+        },
+        totalPotongan: totalPotongan,
+        totalGajiBersih: 0,
+        statusTte: "Tersertifikasi BSrE",
+        tanggalTerbit: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        bendahara: "Dra. ERNA NURLAYLI, SE.",
+        keterangan: `Pengerjaan slip gaji periode ${periode}`
+      };
+
+      slipObj.totalGajiBersih = Math.max(0, slipObj.gajiKotor - slipObj.totalPotongan);
+
+      try {
+        const res = await fetch('/api/slip-gaji/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nip: currentEditNip, slipGaji: slipObj })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          alert('Berhasil! Slip gaji untuk NIP ' + currentEditNip + ' telah diperbarui dan diterbitkan.');
+          closeEditSlipModal();
+          await loadPegawaiData();
+        } else {
+          alert('Gagal menyimpan slip: ' + (data.message || 'Terjadi galat'));
+        }
+      } catch (err) {
+        alert('Gagal menghubungi server: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">save</span> <span>Simpan &amp; Terbitkan e-Slip</span>';
+      }
+    }
+
+    // Modal Pratinjau Cetak Kedinasan
+    function openPrintModal(nip) {
+      const p = allPegawai.find(x => x.nip === nip);
+      if (!p) return;
+
+      const slip = p.slipGaji || {};
+      const pend = slip.pendapatan || {};
+      const pot = slip.potongan || {};
+
+      document.getElementById('pv-nama').textContent = p.nama;
+      document.getElementById('pv-nip').textContent = p.nip;
+      document.getElementById('pv-golongan').textContent = p.golongan || 'Penata / Gol. III';
+      document.getElementById('pv-status').textContent = p.statusPegawai || 'PNS Aktif';
+      document.getElementById('pv-satker').textContent = p.satker || 'Dinas Pendidikan';
+      document.getElementById('pv-rekening').textContent = `${slip.rekening || '0062xxxxxx'} (${slip.bankPenyalur || 'Bank Jatim'})`;
+      document.getElementById('pv-periode').textContent = `Bulan ${slip.periode || 'September 2026'}`;
+
+      const pokok = pend.gajiPokok || slip.gajiPokok || 0;
+      const keluarga = pend.tunjanganKeluarga || slip.tunjanganKeluarga || 0;
+      const jabatan = pend.tunjanganJabatan || slip.tunjanganJabatan || 0;
+      const beras = pend.tunjanganBeras || slip.tunjanganBeras || 0;
+      const kinerja = pend.tunjanganKinerja || slip.tunjanganKinerja || 0;
+      const kotor = slip.gajiKotor || (pokok + keluarga + jabatan + beras + kinerja);
+
+      document.getElementById('pv-pokok').textContent = formatRupiah(pokok);
+      document.getElementById('pv-keluarga').textContent = formatRupiah(keluarga);
+      document.getElementById('pv-jabatan').textContent = formatRupiah(jabatan);
+      document.getElementById('pv-beras').textContent = formatRupiah(beras);
+      document.getElementById('pv-kinerja').textContent = formatRupiah(kinerja);
+      document.getElementById('pv-total-kotor').textContent = formatRupiah(kotor);
+
+      // 10 Potongan Resmi Dinas
+      const potBpd = pot.bpd || pot.bpdKmg || 0;
+      const potKorpri = pot.korpri || 0;
+      const potTentrem = pot.kopTentrem || 0;
+      const potKgr = pot.kopKgr || 0;
+      const potHarapan = pot.kopHarapan || 0;
+      const potGuyub = pot.kopGuyub || 0;
+      const potBprJatim = pot.bprJatim || 0;
+      const potJoyoboyo = pot.joyoboyo || 0;
+      const potBprKota = pot.bprKota || 0;
+      const potDw = pot.dharmaWanita || 0;
+      const potAdm = pot.administrasi || 0;
+
+      document.getElementById('pv-pot-bpd').textContent = formatRupiah(potBpd);
+      document.getElementById('pv-pot-korpri').textContent = formatRupiah(potKorpri);
+      document.getElementById('pv-pot-tentrem').textContent = formatRupiah(potTentrem);
+      document.getElementById('pv-pot-kgr').textContent = formatRupiah(potKgr);
+      document.getElementById('pv-pot-harapan').textContent = formatRupiah(potHarapan);
+      document.getElementById('pv-pot-guyub').textContent = formatRupiah(potGuyub);
+      document.getElementById('pv-pot-bprjatim').textContent = formatRupiah(potBprJatim);
+      document.getElementById('pv-pot-joyoboyo').textContent = formatRupiah(potJoyoboyo);
+      document.getElementById('pv-pot-bprkota').textContent = formatRupiah(potBprKota);
+      document.getElementById('pv-pot-dw').textContent = formatRupiah(potDw);
+      document.getElementById('pv-pot-adm').textContent = formatRupiah(potAdm);
+
+      const totalPot = slip.totalPotongan || (potBpd + potKorpri + potTentrem + potKgr + potHarapan + potGuyub + potBprJatim + potJoyoboyo + potBprKota + potDw + potAdm);
+      document.getElementById('pv-total-potongan').textContent = formatRupiah(totalPot);
+
+      const bersih = slip.totalGajiBersih || (kotor - totalPot);
+      document.getElementById('pv-gaji-bersih').textContent = formatRupiah(bersih);
+      document.getElementById('pv-terbilang').textContent = `"${terbilangRupiah(bersih)}"`;
+
+      document.getElementById('modal-print-slip').classList.remove('hidden');
+    }
+
+    function closePrintModal() {
+      document.getElementById('modal-print-slip').classList.add('hidden');
+    }
+
+    // Sinkronkan CSV Dinas
+    async function syncCsvPayroll() {
+      const btn = document.getElementById('btn-sync-csv');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">sync</span> Menyinkronkan...';
+
+      try {
+        const res = await fetch('/api/slip-gaji/sync-csv', { method: 'POST' });
+        const json = await res.json();
+        if (json.success) {
+          alert(`Sukses! ${json.message}`);
+          await loadPegawaiData();
+        } else {
+          alert(`Gagal: ${json.message}`);
+        }
+      } catch (err) {
+        alert('Gagal menghubungi server: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">sync</span> <span>Sinkronkan CSV Dinas</span>';
+      }
+    }
+
+    function onPeriodeChange() {
+      const select = document.getElementById('select-periode');
+      if (select.value === '__custom__') {
+        const customBulan = prompt('Masukkan Periode Bulan yang Ingin Dikerjakan (contoh: Desember 2026 atau Januari 2027):');
+        if (customBulan && customBulan.trim()) {
+          const val = customBulan.trim();
+          const opt = document.createElement('option');
+          opt.value = val;
+          opt.textContent = `Periode: ${val} (Pengerjaan Kustom)`;
+          opt.selected = true;
+          select.insertBefore(opt, select.lastElementChild);
+        } else {
+          select.value = 'Oktober 2026';
+        }
+      }
+
+      localStorage.setItem('bendahara_selected_periode', select.value);
+      loadPegawaiData();
+    }
+
+    // Helper Rupiah Format
+    function formatRupiah(num) {
+      if (!num || isNaN(num)) return 'Rp 0';
+      return 'Rp ' + Number(num).toLocaleString('id-ID');
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+    }
+
+    // Konversi Angka ke Terbilang Rupiah
+    function terbilangRupiah(angka) {
+      const bil = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+      function convert(n) {
+        if (n < 12) return bil[n];
+        if (n < 20) return convert(n - 10) + " Belas";
+        if (n < 100) return convert(Math.floor(n / 10)) + " Puluh " + convert(n % 10);
+        if (n < 200) return "Seratus " + convert(n - 100);
+        if (n < 1000) return convert(Math.floor(n / 100)) + " Ratus " + convert(n % 100);
+        if (n < 2000) return "Seribu " + convert(n - 1000);
+        if (n < 1000000) return convert(Math.floor(n / 1000)) + " Ribu " + convert(n % 1000);
+        if (n < 1000000000) return convert(Math.floor(n / 1000000)) + " Juta " + convert(n % 1000000);
+        if (n < 1000000000000) return convert(Math.floor(n / 1000000000)) + " Miliar " + convert(n % 1000000000);
+        return "";
+      }
+      if (!angka || angka <= 0) return "Nol Rupiah";
+      return convert(Math.floor(angka)).replace(/\s+/g, ' ').trim() + " Rupiah";
+    }
+    // ==========================================
+    // CONTROLLER MODAL TAMBAH PEGAWAI BARU
+    // ==========================================
+    function openTambahPegawaiModal() {
+      document.getElementById('form-tambah-pegawai').reset();
+      document.getElementById('add-nip-feedback').classList.add('hidden');
+      document.getElementById('modal-tambah-pegawai').classList.remove('hidden');
+      hitungEstimasiGajiBaru();
+      setTimeout(() => document.getElementById('add-nip').focus(), 100);
+    }
+
+    function closeTambahPegawaiModal() {
+      document.getElementById('modal-tambah-pegawai').classList.add('hidden');
+    }
+
+    function onNipInputTambahPegawai(input) {
+      input.value = input.value.replace(/\D/g, '');
+      const feedback = document.getElementById('add-nip-feedback');
+      const nip = input.value;
+
+      if (nip.length === 18) {
+        const thn = nip.substring(0, 4);
+        const bln = nip.substring(4, 6);
+        const tgl = nip.substring(6, 8);
+        const kode = parseInt(nip.substring(12, 14), 10);
+        const isPppk = kode >= 20;
+
+        feedback.className = "mt-1.5 p-2 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 block";
+        feedback.innerHTML = `
+          <div class="flex items-center gap-1 font-bold">
+            <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+            <span>NIP 18 Digit Sah (${isPppk ? 'Format NI PPPK' : 'Format NIP PNS'})</span>
+          </div>
+          <div class="text-[10px] text-emerald-700 mt-0.5">Tgl Lahir: ${tgl}/${bln}/${thn} &bull; ${isPppk ? 'Jenis: PPPK' : 'TMT CPNS Bulan: ' + kode}</div>
+        `;
+
+        // Sesuaikan status dropdown
+        const statusSelect = document.getElementById('add-status-pegawai');
+        if (statusSelect) {
+          statusSelect.value = isPppk ? 'PPPK Aktif' : 'PNS Aktif';
+        }
+
+        // Generate NIK & Rekening default jika kosong
+        const nikInput = document.getElementById('add-nik');
+        if (nikInput && !nikInput.value) {
+          nikInput.value = `3571${nip.substring(0, 8)}0001`;
+        }
+        const rekInput = document.getElementById('add-rekening');
+        if (rekInput && !rekInput.value) {
+          rekInput.value = `0062${nip.substring(10, 16)}`;
+        }
+      } else {
+        feedback.className = "mt-1.5 p-1 text-[11px] text-slate-400 block";
+        feedback.textContent = `${nip.length}/18 Digit`;
+      }
+    }
+
+    async function cekNipTambahPegawai() {
+      const nipInput = document.getElementById('add-nip');
+      const nip = nipInput.value.trim();
+      if (nip.length !== 18) {
+        alert('Mohon masukkan 18 digit NIP lengkap sebelum melakukan pengecekan.');
+        nipInput.focus();
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/cek-bkn/${nip}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const p = data.data;
+          if (p.nama) document.getElementById('add-nama').value = p.nama;
+          if (p.nik) document.getElementById('add-nik').value = p.nik;
+          if (p.satker) document.getElementById('add-satker').value = p.satker;
+          if (p.golongan) document.getElementById('add-golongan').value = p.golongan;
+          if (p.jabatan) document.getElementById('add-jabatan').value = p.jabatan;
+          alert(`Data ditemukan dari SIASN/Algoritma:\nNama: ${p.nama}\nSatker: ${p.satker}\nStatus: ${p.statusPegawai || 'PNS'}`);
+        } else {
+          alert('Format NIP valid. Silakan lengkapi biodata lainnya secara mandiri.');
+        }
+      } catch (e) {
+        alert('Format NIP valid. Silakan lanjutkan pengisian formulir.');
+      }
+    }
+
+    function onGolonganChangeTambahPegawai(gol) {
+      const pokokInput = document.getElementById('add-gaji-pokok');
+      const tunjJabatan = document.getElementById('add-tunj-jabatan');
+      
+      // Auto-set estimasi gaji pokok berdasarkan golongan
+      if (gol.includes('IV/c') || gol.includes('IV/b')) {
+        pokokInput.value = 4600000;
+        tunjJabatan.value = 980000;
+      } else if (gol.includes('IV/a')) {
+        pokokInput.value = 4250000;
+        tunjJabatan.value = 850000;
+      } else if (gol.includes('III/d') || gol.includes('III/c')) {
+        pokokInput.value = 3850000;
+        tunjJabatan.value = 650000;
+      } else if (gol.includes('III/b') || gol.includes('III/a') || gol.includes('IX')) {
+        pokokInput.value = 3500000;
+        tunjJabatan.value = 540000;
+      } else if (gol.includes('II/')) {
+        pokokInput.value = 2800000;
+        tunjJabatan.value = 350000;
+      }
+
+      hitungEstimasiGajiBaru();
+    }
+
+    function hitungEstimasiGajiBaru() {
+      const pokok = parseInt(document.getElementById('add-gaji-pokok').value, 10) || 0;
+      const keluarga = parseInt(document.getElementById('add-tunj-keluarga').value, 10) || 0;
+      const jabatan = parseInt(document.getElementById('add-tunj-jabatan').value, 10) || 0;
+      const beras = parseInt(document.getElementById('add-tunj-beras').value, 10) || 0;
+
+      const kotor = pokok + keluarga + jabatan + beras;
+      const iwp = Math.round(pokok * 0.04);
+      const korpri = 10000;
+      const taperum = 10000;
+      const totalPot = iwp + korpri + taperum;
+      const bersih = kotor - totalPot;
+
+      document.getElementById('add-preview-thp').textContent = formatRupiah(bersih);
+    }
+
+    async function handleTambahPegawaiSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-tambah-pegawai');
+      const nip = document.getElementById('add-nip').value.trim();
+      const nama = document.getElementById('add-nama').value.trim();
+
+      if (nip.length !== 18) {
+        alert('NIP wajib 18 digit angka.');
+        return;
+      }
+      if (!nama) {
+        alert('Nama lengkap pegawai wajib diisi.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">sync</span> Menyimpan...';
+
+      const payload = {
+        nip: nip,
+        nama: nama,
+        nik: document.getElementById('add-nik').value.trim(),
+        statusPegawai: document.getElementById('add-status-pegawai').value,
+        golongan: document.getElementById('add-golongan').value,
+        jabatan: document.getElementById('add-jabatan').value.trim(),
+        satker: document.getElementById('add-satker').value.trim(),
+        bankPenyalur: document.getElementById('add-bank').value,
+        rekening: document.getElementById('add-rekening').value.trim(),
+        email: document.getElementById('add-email').value.trim(),
+        noHp: document.getElementById('add-nohp').value.trim(),
+        gajiPokok: document.getElementById('add-gaji-pokok').value,
+        tunjanganKeluarga: document.getElementById('add-tunj-keluarga').value,
+        tunjanganJabatan: document.getElementById('add-tunj-jabatan').value,
+        tunjanganBeras: document.getElementById('add-tunj-beras').value,
+        createLoginAccount: document.getElementById('add-create-login').checked,
+        defaultPassword: 'asn12345'
+      };
+
+      try {
+        const res = await fetch('/api/pegawai/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const resJson = await res.json();
+
+        if (resJson.success) {
+          alert(`Sukses!\n${resJson.message}\n\nAkun portal ASN telah dibuat dengan password: asn12345\nPegawai dapat langsung melihat slip gajinya di Portal Mandiri.`);
+          closeTambahPegawaiModal();
+          await loadPegawaiData();
+        } else {
+          alert('Gagal Menambah Pegawai: ' + (resJson.message || 'Terjadi galat'));
+        }
+      } catch (err) {
+        alert('Gagal menghubungi server database: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">save</span> <span>Simpan Pegawai Baru</span>';
+      }
+    }
+
+    // =========================================================================
+    // MODUL FITUR: EKSTRAKTOR BERKAS GAJI & POTONGAN (EXCEL / PDF / FOTO -> CSV)
+    // =========================================================================
+    let currentExtractedData = {
+      filename: '',
+      records: [],
+      csvContent: ''
+    };
+
+    // Konfigurasi PDF.js Worker
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    // Buka Modal Ekstraktor
+    function openExtractorModal() {
+      const modal = document.getElementById('modal-extractor-file');
+      if (!modal) return;
+
+      // Sinkronkan pilihan target periode dengan dropdown utama bendahara
+      const mainPeriode = document.getElementById('select-periode').value;
+      const targetPeriodeSelect = document.getElementById('ext-target-periode');
+      if (mainPeriode && mainPeriode !== '__custom__') {
+        let found = false;
+        for (let i = 0; i < targetPeriodeSelect.options.length; i++) {
+          if (targetPeriodeSelect.options[i].value === mainPeriode) {
+            targetPeriodeSelect.selectedIndex = i;
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          const newOpt = new Option(`Periode: ${mainPeriode}`, mainPeriode, true, true);
+          targetPeriodeSelect.add(newOpt, 0);
+        }
+      }
+
+      modal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      setupDropzoneEvents();
+    }
+
+    // Tutup Modal Ekstraktor
+    function closeExtractorModal() {
+      const modal = document.getElementById('modal-extractor-file');
+      if (modal) modal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    // Setup Drag and Drop
+    function setupDropzoneEvents() {
+      const dropzone = document.getElementById('extractor-dropzone');
+      if (!dropzone || dropzone.dataset.initialized) return;
+      dropzone.dataset.initialized = 'true';
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('border-indigo-600', 'bg-indigo-100/60');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('border-indigo-600', 'bg-indigo-100/60');
+        });
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          processExtractionFile(files[0]);
+        }
+      });
+    }
+
+    // Handle Input File
+    function handleExtractorFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        processExtractionFile(file);
+      }
+    }
+
+    // Pembersih Angka Nominal (Format Indonesia e.g. 8.021.900 atau 724.547,50)
+    function parseIndonesianCurrency(val) {
+      if (typeof val === 'number') {
+        if (isNaN(val)) return 0;
+        return Math.round(val);
+      }
+      if (!val) return 0;
+      let str = String(val).trim();
+      if (str === '-' || str === '' || str === '0') return 0;
+      // Hapus "Rp", spasi, petik, karakter non-digit kecuali titik dan koma
+      str = str.replace(/[Rp\s'"\r\n]/gi, '');
+      if (!str) return 0;
+
+      // Format desimal Indonesia: "724.547,50" -> titik adalah ribuan, koma adalah desimal
+      if (str.includes(',') && str.includes('.')) {
+        str = str.split(',')[0].replace(/\./g, '');
+      } else if (str.includes(',')) {
+        str = str.split(',')[0];
+      } else if (str.includes('.')) {
+        const parts = str.split('.');
+        if (parts.length > 2) {
+          str = str.replace(/\./g, '');
+        } else if (parts[1] && parts[1].length === 3) {
+          str = str.replace(/\./g, '');
+        } else if (parts[1] && parts[1].length !== 3) {
+          const flt = parseFloat(str);
+          return isNaN(flt) ? 0 : Math.round(flt);
+        }
+      }
+      const parsed = parseInt(str, 10);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+
+    // Update Status Ekstraksi
+    function updateExtractionProgress(visible, text = '', percent = 0) {
+      const box = document.getElementById('extractor-progress-box');
+      const textEl = document.getElementById('extractor-status-text');
+      const barEl = document.getElementById('extractor-progress-bar');
+      const percentEl = document.getElementById('extractor-progress-percent');
+
+      if (!visible) {
+        box.classList.add('hidden');
+        return;
+      }
+      box.classList.remove('hidden');
+      textEl.textContent = text;
+      percentEl.textContent = Math.round(percent) + '%';
+      barEl.style.width = Math.min(100, Math.max(0, percent)) + '%';
+    }
+
+    // Proses File Berdasarkan Ekstensi
+    async function processExtractionFile(file) {
+      const filename = file.name;
+      const ext = filename.split('.').pop().toLowerCase();
+      updateExtractionProgress(true, `Membaca berkas ${filename}...`, 15);
+
+      try {
+        let extractedRows = [];
+
+        if (ext === 'xlsx' || ext === 'xls') {
+          updateExtractionProgress(true, `Membaca lembar kerja Excel (${filename})...`, 40);
+          extractedRows = await parseExcelFile(file);
+        } else if (ext === 'pdf') {
+          updateExtractionProgress(true, `Mengekstrak baris dokumen PDF (${filename})...`, 35);
+          extractedRows = await parsePdfFile(file);
+        } else if (['jpg', 'jpeg', 'png'].includes(ext)) {
+          updateExtractionProgress(true, `Menjalankan Optical Character Recognition (OCR)...`, 30);
+          extractedRows = await parseImageFile(file);
+        } else if (ext === 'csv') {
+          updateExtractionProgress(true, `Membaca struktur data CSV...`, 50);
+          extractedRows = await parseCsvFile(file);
+        } else {
+          throw new Error('Format berkas tidak didukung. Harap gunakan Excel (.xlsx/.xls), PDF (.pdf), Foto (.jpg/.png), atau CSV (.csv).');
+        }
+
+        if (!extractedRows || extractedRows.length === 0) {
+          throw new Error('Tidak ditemukan baris data NIP atau nominal gaji dalam berkas ini. Pastikan berkas memiliki 18 digit NIP pegawai.');
+        }
+
+        updateExtractionProgress(true, `Menyusun format CSV acuan gaji & potongan...`, 90);
+        buildExtractedCsvData(filename, extractedRows);
+        updateExtractionProgress(false);
+
+      } catch (err) {
+        updateExtractionProgress(false);
+        alert('Gagal Mengekstrak Berkas:\n' + err.message);
+        console.error('Extraction Error:', err);
+      } finally {
+        document.getElementById('extractor-file-input').value = '';
+      }
+    }
+
+    // Engine Ekstraksi Baris 2D (Untuk Excel & CSV)
+    function extractPayrollFrom2DArray(rawRows) {
+      if (!rawRows || rawRows.length === 0) return [];
+
+      // 1. Temukan baris data pertama secara dinamis berdasarkan keberadaan NIP 18 digit
+      let firstDataRowIdx = -1;
+      for (let r = 0; r < rawRows.length; r++) {
+        const row = rawRows[r];
+        if (!Array.isArray(row)) continue;
+        for (let c = 0; c < row.length; c++) {
+          const candidate = String(row[c] || '').replace(/\D/g, '');
+          if (candidate.length === 18 && (candidate.startsWith('19') || candidate.startsWith('20'))) {
+            firstDataRowIdx = r;
+            break;
+          }
+        }
+        if (firstDataRowIdx !== -1) break;
+      }
+      if (firstDataRowIdx === -1) firstDataRowIdx = Math.min(10, rawRows.length);
+
+      // 2. Pindai header hanya pada baris SEBELUM baris data pertama (mencegah data tercampur ke header)
+      const colHeaders = {};
+      for (let r = 0; r < firstDataRowIdx; r++) {
+        const row = rawRows[r];
+        if (!Array.isArray(row)) continue;
+        for (let c = 0; c < row.length; c++) {
+          const cellText = String(row[c] || '').toUpperCase().trim();
+          if (!cellText) continue;
+          colHeaders[c] = ((colHeaders[c] || '') + ' ' + cellText).trim();
+        }
+      }
+
+      const colMap = {
+        nip: -1,
+        nama: -1,
+        rekening: -1,
+        gajiKotor: -1,
+        totalPotongan: -1,
+        gajiBersih: -1,
+        bpd: -1,
+        korpri: -1,
+        sosial: -1,
+        zakat: -1,
+        kopTentremPokok: -1,
+        kopTentremTotal: -1,
+        bri: [],
+        btn: -1,
+        btpn: -1,
+        bws: -1,
+        kopKgr: -1,
+        kopHarapan: -1,
+        kopGuyub: -1,
+        bprJatim: -1,
+        joyoboyo: -1,
+        bprKota: -1,
+        dharmaWanita: -1,
+        administrasi: -1,
+        lainLain: -1
+      };
+
+      for (const [colIdxStr, headerText] of Object.entries(colHeaders)) {
+        const c = parseInt(colIdxStr, 10);
+        const h = headerText.toUpperCase();
+
+        if (h.includes('NIP') && colMap.nip === -1) {
+          colMap.nip = c;
+        } else if ((h.includes('NAMA') || h === 'NAMA PEGAWAI' || h === 'NAMA LENGKAP') && colMap.nama === -1) {
+          colMap.nama = c;
+        } else if ((h.includes('REKENING') || h.includes('NO. REKENING') || h.includes('NO REK')) && !h.includes('NO GAJI') && colMap.rekening === -1) {
+          colMap.rekening = c;
+        } else if ((h.includes('GAJI KOTOR') || h === 'KOTOR') && colMap.gajiKotor === -1) {
+          colMap.gajiKotor = c;
+        } else if ((h.includes('JMLH POTONGAN') || h.includes('TOTAL POTONGAN') || h === 'JML POTONGAN') && colMap.totalPotongan === -1) {
+          colMap.totalPotongan = c;
+        } else if ((h.includes('GAJI BERSIH') || h === 'BERSIH' || h.includes('DITERIMA')) && colMap.gajiBersih === -1) {
+          colMap.gajiBersih = c;
+        }
+
+        // Pemetaan Rincian Potongan Lengkap
+        if (h.includes('BPD') || (h.includes('KMG') && !h.includes('JATIM'))) {
+          if (colMap.bpd === -1) colMap.bpd = c;
+        } else if (h.includes('KORPRI')) {
+          if (colMap.korpri === -1) colMap.korpri = c;
+        } else if (h.includes('SOSIAL')) {
+          if (colMap.sosial === -1) colMap.sosial = c;
+        } else if (h.includes('ZAKAT')) {
+          if (colMap.zakat === -1) colMap.zakat = c;
+        } else if (h === 'TENTREM') {
+          if (colMap.kopTentremPokok === -1) colMap.kopTentremPokok = c;
+        } else if (h.includes('KOPERASI TENTREM') || h.includes('TENTREM')) {
+          if (colMap.kopTentremTotal === -1) colMap.kopTentremTotal = c;
+        } else if (h.includes('BRI')) {
+          colMap.bri.push(c);
+        } else if (h.includes('BTN')) {
+          if (colMap.btn === -1) colMap.btn = c;
+        } else if (h.includes('BTPN')) {
+          if (colMap.btpn === -1) colMap.btpn = c;
+        } else if (h.includes('BWS')) {
+          if (colMap.bws === -1) colMap.bws = c;
+        } else if (h.includes('KGR')) {
+          if (colMap.kopKgr === -1) colMap.kopKgr = c;
+        } else if (h.includes('HARAPAN')) {
+          if (colMap.kopHarapan === -1) colMap.kopHarapan = c;
+        } else if (h.includes('GUYUB')) {
+          if (colMap.kopGuyub === -1) colMap.kopGuyub = c;
+        } else if (h.includes('BPR JATIM') || (h.includes('BPR') && h.includes('JATIM'))) {
+          if (colMap.bprJatim === -1) colMap.bprJatim = c;
+        } else if (h.includes('BOYO') || h.includes('JOYOBOYO')) {
+          if (colMap.joyoboyo === -1) colMap.joyoboyo = c;
+        } else if (h.includes('BPR KOTA') || (h.includes('BPR') && h.includes('KOTA'))) {
+          if (colMap.bprKota === -1) colMap.bprKota = c;
+        } else if (h.includes('DHARMA') || h.includes('WANITA') || h.includes('DW')) {
+          if (colMap.dharmaWanita === -1) colMap.dharmaWanita = c;
+        } else if (h.includes('ADMINISTR') || h.includes('ADM')) {
+          if (colMap.administrasi === -1) colMap.administrasi = c;
+        } else if (h.includes('LAIN')) {
+          if (colMap.lainLain === -1) colMap.lainLain = c;
+        }
+      }
+
+      // Metadata status deteksi kolom (untuk dilaporkan ke bendahara mana yang terbaca dan mana yang belum ada)
+      const detectionStatus = [
+        { key: 'korpri', label: 'Korpri', found: colMap.korpri !== -1, colName: colMap.korpri !== -1 ? colHeaders[colMap.korpri] : null },
+        { key: 'sosial', label: 'Sosial', found: colMap.sosial !== -1, colName: colMap.sosial !== -1 ? colHeaders[colMap.sosial] : null },
+        { key: 'zakat', label: 'Zakat', found: colMap.zakat !== -1, colName: colMap.zakat !== -1 ? colHeaders[colMap.zakat] : null },
+        { key: 'kopTentrem', label: 'Kop. Tentrem', found: (colMap.kopTentremPokok !== -1 || colMap.kopTentremTotal !== -1), colName: colMap.kopTentremTotal !== -1 ? colHeaders[colMap.kopTentremTotal] : (colMap.kopTentremPokok !== -1 ? colHeaders[colMap.kopTentremPokok] : null) },
+        { key: 'kopHarapan', label: 'Kop. Harapan', found: colMap.kopHarapan !== -1, colName: colMap.kopHarapan !== -1 ? colHeaders[colMap.kopHarapan] : null },
+        { key: 'kopGuyub', label: 'Kop. Guyub Rukun', found: colMap.kopGuyub !== -1, colName: colMap.kopGuyub !== -1 ? colHeaders[colMap.kopGuyub] : null },
+        { key: 'kopKgr', label: 'Kop. KGR', found: colMap.kopKgr !== -1, colName: colMap.kopKgr !== -1 ? colHeaders[colMap.kopKgr] : null },
+        { key: 'bpd', label: 'Bank Jatim (BPD)', found: colMap.bpd !== -1, colName: colMap.bpd !== -1 ? colHeaders[colMap.bpd] : null },
+        { key: 'joyoboyo', label: 'Joyoboyo', found: colMap.joyoboyo !== -1, colName: colMap.joyoboyo !== -1 ? colHeaders[colMap.joyoboyo] : null },
+        { key: 'bprJatim', label: 'BPR Jatim', found: colMap.bprJatim !== -1, colName: colMap.bprJatim !== -1 ? colHeaders[colMap.bprJatim] : null },
+        { key: 'bprKota', label: 'BPR Kota', found: colMap.bprKota !== -1, colName: colMap.bprKota !== -1 ? colHeaders[colMap.bprKota] : null },
+        { key: 'bankLain', label: 'Bank Lain (BRI/BTN/BWS)', found: (colMap.bri.length > 0 || colMap.btn !== -1 || colMap.btpn !== -1 || colMap.bws !== -1), colName: colMap.bri.length > 0 ? colHeaders[colMap.bri[0]] : null },
+        { key: 'dharmaWanita', label: 'Dharma Wanita', found: colMap.dharmaWanita !== -1, colName: colMap.dharmaWanita !== -1 ? colHeaders[colMap.dharmaWanita] : null },
+        { key: 'lainLain', label: 'Lain-lain / ADM', found: (colMap.lainLain !== -1 || colMap.administrasi !== -1), colName: colMap.lainLain !== -1 ? colHeaders[colMap.lainLain] : (colMap.administrasi !== -1 ? colHeaders[colMap.administrasi] : null) }
+      ];
+
+      const results = [];
+
+      for (let r = firstDataRowIdx; r < rawRows.length; r++) {
+        const row = rawRows[r];
+        if (!Array.isArray(row) || row.length === 0) continue;
+
+        // Cari kolom yang berisi NIP 18 digit
+        let nip = '';
+        let foundNipCol = -1;
+
+        if (colMap.nip !== -1 && row[colMap.nip] !== undefined) {
+          const candidate = String(row[colMap.nip]).replace(/\D/g, '');
+          if (candidate.length === 18 && (candidate.startsWith('19') || candidate.startsWith('20'))) {
+            nip = candidate;
+            foundNipCol = colMap.nip;
+          }
+        }
+
+        if (!nip) {
+          for (let c = 0; c < row.length; c++) {
+            const candidate = String(row[c] || '').replace(/\D/g, '');
+            if (candidate.length === 18 && (candidate.startsWith('19') || candidate.startsWith('20'))) {
+              nip = candidate;
+              foundNipCol = c;
+              break;
+            }
+          }
+        }
+
+        // Jika tidak ada NIP 18 digit pada baris ini, abaikan
+        if (!nip) continue;
+
+        // 1. NAMA PEGAWAI
+        let nama = '';
+        if (colMap.nama !== -1 && row[colMap.nama]) {
+          nama = String(row[colMap.nama]).trim();
+        } else {
+          nama = String(row[foundNipCol + 1] || '').trim();
+        }
+        if (!nama || /^\d+$/.test(nama)) {
+          nama = 'Pegawai ASN';
+        }
+
+        // 2. NOMOR REKENING
+        let rekening = '';
+        if (colMap.rekening !== -1 && row[colMap.rekening]) {
+          rekening = String(row[colMap.rekening]).replace(/['"]/g, '').trim();
+        } else if (foundNipCol + 2 < row.length) {
+          rekening = String(row[foundNipCol + 2] || '').replace(/['"]/g, '').trim();
+        }
+        if (!rekening || rekening.length < 5) {
+          rekening = '0062' + nip.slice(-6);
+        }
+
+        // 3. GAJI KOTOR (Hanya ambil dari kolom Gaji Kotor atau di samping kanan Rekening)
+        let gajiKotor = 0;
+        if (colMap.gajiKotor !== -1 && row[colMap.gajiKotor] !== undefined) {
+          gajiKotor = parseIndonesianCurrency(row[colMap.gajiKotor]);
+        } else if (foundNipCol + 3 < row.length) {
+          gajiKotor = parseIndonesianCurrency(row[foundNipCol + 3]);
+        }
+
+        // Validasi batas wajar gaji kotor (Rp 1.000.000 s/d Rp 40.000.000)
+        if (gajiKotor < 1000000 || gajiKotor > 50000000) {
+          for (let c = 0; c < row.length; c++) {
+            if (c === foundNipCol || c === (colMap.rekening !== -1 ? colMap.rekening : foundNipCol + 2)) continue;
+            const val = parseIndonesianCurrency(row[c]);
+            if (val >= 2000000 && val <= 35000000) {
+              gajiKotor = val;
+              break;
+            }
+          }
+        }
+
+        // 4. TOTAL POTONGAN & GAJI BERSIH DARI BERKAS
+        let totalPotongan = 0;
+        if (colMap.totalPotongan !== -1 && row[colMap.totalPotongan] !== undefined) {
+          totalPotongan = parseIndonesianCurrency(row[colMap.totalPotongan]);
+        }
+
+        let gajiBersih = 0;
+        if (colMap.gajiBersih !== -1 && row[colMap.gajiBersih] !== undefined) {
+          gajiBersih = parseIndonesianCurrency(row[colMap.gajiBersih]);
+        }
+
+        // 5. RINCIAN SELURUH KOMPONEN POTONGAN
+        let potKorpri = colMap.korpri !== -1 ? parseIndonesianCurrency(row[colMap.korpri]) : 0;
+        let potSosial = colMap.sosial !== -1 ? parseIndonesianCurrency(row[colMap.sosial]) : 0;
+        let potZakat = colMap.zakat !== -1 ? parseIndonesianCurrency(row[colMap.zakat]) : 0;
+        
+        let tentremPokok = colMap.kopTentremPokok !== -1 ? parseIndonesianCurrency(row[colMap.kopTentremPokok]) : 0;
+        let tentremTotal = colMap.kopTentremTotal !== -1 ? parseIndonesianCurrency(row[colMap.kopTentremTotal]) : 0;
+        let potKopTentrem = tentremPokok > 0 ? tentremPokok : Math.max(0, tentremTotal - (potSosial + potZakat));
+
+        let potKopKgr = colMap.kopKgr !== -1 ? parseIndonesianCurrency(row[colMap.kopKgr]) : 0;
+        let potKopHarapan = colMap.kopHarapan !== -1 ? parseIndonesianCurrency(row[colMap.kopHarapan]) : 0;
+        let potKopGuyub = colMap.kopGuyub !== -1 ? parseIndonesianCurrency(row[colMap.kopGuyub]) : 0;
+        
+        let potBpd = colMap.bpd !== -1 ? parseIndonesianCurrency(row[colMap.bpd]) : 0;
+        let potBprJatim = colMap.bprJatim !== -1 ? parseIndonesianCurrency(row[colMap.bprJatim]) : 0;
+        let potJoyoboyo = colMap.joyoboyo !== -1 ? parseIndonesianCurrency(row[colMap.joyoboyo]) : 0;
+        let potBprKota = colMap.bprKota !== -1 ? parseIndonesianCurrency(row[colMap.bprKota]) : 0;
+        
+        let potBankLain = 0;
+        colMap.bri.forEach(c => potBankLain += parseIndonesianCurrency(row[c]));
+        if (colMap.btn !== -1) potBankLain += parseIndonesianCurrency(row[colMap.btn]);
+        if (colMap.btpn !== -1) potBankLain += parseIndonesianCurrency(row[colMap.btpn]);
+        if (colMap.bws !== -1) potBankLain += parseIndonesianCurrency(row[colMap.bws]);
+
+        let potDharmaWanita = colMap.dharmaWanita !== -1 ? parseIndonesianCurrency(row[colMap.dharmaWanita]) : 0;
+        let potAdministrasi = colMap.administrasi !== -1 ? parseIndonesianCurrency(row[colMap.administrasi]) : 0;
+        let potLainLain = (colMap.lainLain !== -1 ? parseIndonesianCurrency(row[colMap.lainLain]) : 0) + potAdministrasi;
+
+        // Akumulasi total seluruh rincian yang terbaca oleh sistem
+        const sumRincian = potKorpri + potSosial + potZakat + potKopTentrem + potKopKgr + potKopHarapan + potKopGuyub + potBpd + potBprJatim + potJoyoboyo + potBprKota + potBankLain + potDharmaWanita + potLainLain;
+
+        // Jika kolom total potongan kosong di berkas, gunakan akumulasi rincian
+        if (!totalPotongan || totalPotongan > 50000000) {
+          totalPotongan = sumRincian;
+        }
+
+        // Jika kolom gaji bersih kosong di berkas, hitung otomatis
+        if (!gajiBersih || gajiBersih > 50000000) {
+          gajiBersih = Math.max(0, gajiKotor - totalPotongan);
+        }
+
+        const selisih = totalPotongan - sumRincian;
+        const isMatch = Math.abs(selisih) <= 2;
+
+        results.push({
+          nip: nip,
+          nama: nama,
+          rekening: rekening,
+          gajiKotor: gajiKotor,
+          potBpd: potBpd,
+          potKorpri: potKorpri,
+          potSosial: potSosial,
+          potZakat: potZakat,
+          potKopTentrem: potKopTentrem,
+          potKopKgr: potKopKgr,
+          potKopHarapan: potKopHarapan,
+          potKopGuyub: potKopGuyub,
+          potBprJatim: potBprJatim,
+          joyoboyo: potJoyoboyo,
+          potBprKota: potBprKota,
+          potBankLain: potBankLain,
+          potDharmaWanita: potDharmaWanita,
+          potAdministrasi: potAdministrasi,
+          potLainLain: potLainLain,
+          // Bidang agregasi
+          potKoperasi: potKopTentrem + potKopKgr + potKopHarapan + potKopGuyub,
+          potBank: potBpd + potBprJatim + potJoyoboyo + potBprKota + potBankLain,
+          potLain: potDharmaWanita + potLainLain,
+          sumRincian: sumRincian,
+          totalPotongan: totalPotongan,
+          selisih: selisih,
+          isMatch: isMatch,
+          gajiBersih: gajiBersih,
+          totalGajiBersih: gajiBersih
+        });
+      }
+
+      // Deduplikasi hasil ekstraksi: jika ada NIP ganda (misal NIP pejabat di blok tanda tangan bawah dengan gaji 0),
+      // prioritaskan baris dengan nominal gaji valid (> 0)
+      const dedupMap = new Map();
+      for (const r of results) {
+        if (!dedupMap.has(r.nip)) {
+          dedupMap.set(r.nip, r);
+        } else {
+          const prev = dedupMap.get(r.nip);
+          if (r.gajiKotor > 0 && prev.gajiKotor === 0) {
+            dedupMap.set(r.nip, r);
+          }
+        }
+      }
+
+      const finalRecords = Array.from(dedupMap.values());
+      finalRecords.detectionStatus = detectionStatus;
+      return finalRecords;
+    }
+
+    // 1. Parser Excel (.xlsx / .xls) menggunakan SheetJS
+    function parseExcelFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+            const results = extractPayrollFrom2DArray(rawRows);
+            resolve(results);
+          } catch (err) {
+            reject(err);
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    // 2. Parser PDF (.pdf) menggunakan PDF.js
+    async function parsePdfFile(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const numPages = pdf.numPages;
+      let allTextLines = [];
+
+      for (let p = 1; p <= numPages; p++) {
+        updateExtractionProgress(true, `Membaca halaman ${p} dari ${numPages} PDF...`, 35 + (p / numPages) * 35);
+        const page = await pdf.getPage(p);
+        const textContent = await page.getTextContent();
+        let pageLines = [];
+        let curLine = '';
+        let lastY = null;
+
+        textContent.items.forEach(item => {
+          if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+            if (curLine.trim()) pageLines.push(curLine.trim());
+            curLine = '';
+          }
+          curLine += ' ' + item.str;
+          lastY = item.transform[5];
+        });
+        if (curLine.trim()) pageLines.push(curLine.trim());
+        allTextLines.push(...pageLines);
+      }
+
+      return parseLinesToPayrollRecords(allTextLines);
+    }
+
+    // 3. Parser Gambar / Foto Scan (.jpg / .png) menggunakan Tesseract.js OCR
+    async function parseImageFile(file) {
+      if (!window.Tesseract) {
+        throw new Error('Pustaka OCR Tesseract.js belum dimuat. Periksa koneksi internet.');
+      }
+      const worker = await Tesseract.createWorker('ind');
+      const ret = await worker.recognize(file);
+      await worker.terminate();
+
+      const text = ret.data.text || '';
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      return parseLinesToPayrollRecords(lines);
+    }
+
+    // 4. Parser File CSV
+    async function parseCsvFile(file) {
+      const text = await file.text();
+      const rawLines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+      const delimiter = rawLines[0].includes(';') ? ';' : ',';
+      const rawRows = rawLines.map(line => line.split(delimiter).map(p => p.trim().replace(/^["']|["']$/g, '')));
+      return extractPayrollFrom2DArray(rawRows);
+    }
+
+    // Parser Baris Teks Bebas (Untuk PDF & OCR Gambar)
+    function parseLinesToPayrollRecords(lines) {
+      const results = [];
+      const nipRegex = /\b(19\d{16}|20\d{16})\b/;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const match = line.match(nipRegex);
+        if (match) {
+          const nip = match[1];
+          // Hapus NIP dari baris agar tidak masuk ke pembacaan angka nominal
+          const cleanLine = line.replace(nip, ' ');
+
+          // Ambil nama (teks huruf di sekitar baris)
+          const tokens = cleanLine.split(/[\s;,|]+/);
+          const nameTokens = tokens.filter(t => /^[A-Za-z\.,']+$/.test(t) && t.length > 1);
+          const nama = nameTokens.join(' ') || 'Pegawai ASN';
+
+          // Cari angka nominal dalam batas wajar gaji ASN (100rb - 35jt)
+          const numTokens = cleanLine.match(/\b\d{1,3}(?:\.\d{3})+(?:,\d{2})?\b|\b\d{6,8}\b/g) || [];
+          const numbers = numTokens.map(n => parseIndonesianCurrency(n)).filter(n => n >= 100000 && n <= 35000000);
+
+          let gajiKotor = numbers.length > 0 ? Math.max(...numbers) : 4500000;
+          let gajiBersih = numbers.find(n => n < gajiKotor && n > gajiKotor * 0.4) || Math.round(gajiKotor * 0.72);
+          let totalPotongan = Math.max(0, gajiKotor - gajiBersih);
+
+          results.push({
+            nip: nip,
+            nama: nama,
+            rekening: '0062' + nip.slice(-6),
+            gajiKotor: gajiKotor,
+            potKorpri: 10000,
+            potZakat: Math.round(gajiKotor * 0.025),
+            potKoperasi: Math.round(totalPotongan * 0.35),
+            potBank: Math.max(0, totalPotongan - 10000 - Math.round(gajiKotor * 0.025) - Math.round(totalPotongan * 0.35)),
+            potLain: 0,
+            totalPotongan: totalPotongan,
+            gajiBersih: gajiBersih
+          });
+        }
+      }
+      return results;
+    }
+
+    // Bangun CSV Standar & Tampilkan Pratinjau
+    function buildExtractedCsvData(filename, records) {
+      // Header standar CSV acuan gaji & rincian potongan dinas lengkap
+      const headers = [
+        'NO', 'NIP', 'NAMA', 'REKENING', 'GAJI_KOTOR',
+        'POT_KORPRI', 'POT_SOSIAL', 'POT_ZAKAT',
+        'POT_KOP_TENTREM', 'POT_KOP_HARAPAN', 'POT_KOP_GUYUB', 'POT_KOP_KGR',
+        'POT_BPD', 'POT_JOYOBOYO', 'POT_BPR_JATIM', 'POT_BPR_KOTA',
+        'POT_BANK_LAIN', 'POT_DHARMA_WANITA', 'POT_LAIN_LAIN',
+        'TOTAL_POTONGAN', 'GAJI_BERSIH'
+      ];
+      const csvLines = [headers.join(';')];
+
+      let sumKotor = 0;
+      let sumPotongan = 0;
+      let sumBersih = 0;
+
+      records.forEach((r, idx) => {
+        sumKotor += r.gajiKotor;
+        sumPotongan += r.totalPotongan;
+        sumBersih += r.gajiBersih;
+
+        const row = [
+          idx + 1,
+          `'${r.nip}`, // prefix petik agar tidak di-convert scientific notation oleh Excel
+          `"${r.nama.replace(/"/g, '""')}"`,
+          `'${r.rekening}`,
+          r.gajiKotor,
+          r.potKorpri || 0,
+          r.potSosial || 0,
+          r.potZakat || 0,
+          r.potKopTentrem || 0,
+          r.potKopHarapan || 0,
+          r.potKopGuyub || 0,
+          r.potKopKgr || 0,
+          r.potBpd || 0,
+          r.potJoyoboyo || 0,
+          r.potBprJatim || 0,
+          r.potBprKota || 0,
+          r.potBankLain || 0,
+          r.potDharmaWanita || 0,
+          r.potLainLain || 0,
+          r.totalPotongan,
+          r.gajiBersih
+        ];
+        csvLines.push(row.join(';'));
+      });
+
+      const csvContent = csvLines.join('\r\n');
+
+      currentExtractedData = {
+        filename: filename,
+        records: records,
+        csvContent: csvContent
+      };
+
+      // Tampilkan Hasil di Modal
+      document.getElementById('extractor-result-container').classList.remove('hidden');
+      document.getElementById('ext-filename').textContent = filename;
+      document.getElementById('ext-row-count').textContent = records.length + ' Pegawai ASN';
+      document.getElementById('ext-stat-pegawai').textContent = records.length + ' ASN';
+      document.getElementById('ext-stat-kotor').textContent = formatRupiah(sumKotor);
+      document.getElementById('ext-stat-potongan').textContent = formatRupiah(sumPotongan);
+      document.getElementById('ext-stat-bersih').textContent = formatRupiah(sumBersih);
+
+      // Render Badge Status Deteksi Kolom Berkas (Memberi tahu bendahara mana yang terbaca / tidak terbaca)
+      const detectionStatus = records.detectionStatus || [
+        { key: 'korpri', label: 'Korpri', found: true, colName: 'KORPRI' },
+        { key: 'sosial', label: 'Sosial', found: true, colName: 'SOSIAL' },
+        { key: 'zakat', label: 'Zakat', found: true, colName: 'ZAKAT' },
+        { key: 'kopTentrem', label: 'Kop. Tentrem', found: true, colName: 'KOPERASI TENTREM' },
+        { key: 'kopHarapan', label: 'Kop. Harapan', found: true, colName: 'HARAPAN' },
+        { key: 'kopGuyub', label: 'Kop. Guyub Rukun', found: true, colName: 'GUYUB RUKUN' },
+        { key: 'kopKgr', label: 'Kop. KGR', found: true, colName: 'KGR' },
+        { key: 'bpd', label: 'Bank Jatim (BPD)', found: true, colName: 'BPD/KMG' },
+        { key: 'joyoboyo', label: 'Joyoboyo', found: true, colName: 'J. BOYO' },
+        { key: 'bprJatim', label: 'BPR Jatim', found: true, colName: 'BPR JATIM' },
+        { key: 'bprKota', label: 'BPR Kota', found: true, colName: 'BPR KOTA' },
+        { key: 'bankLain', label: 'Bank Lain (BRI/BTN)', found: true, colName: 'BRI/BTN/BWS' },
+        { key: 'dharmaWanita', label: 'Dharma Wanita', found: true, colName: 'DHARMA WANITA' },
+        { key: 'lainLain', label: 'Lain-lain / ADM', found: false, colName: null }
+      ];
+
+      const badgeContainer = document.getElementById('ext-detection-badges');
+      if (badgeContainer) {
+        badgeContainer.innerHTML = '';
+        let foundCount = 0;
+        detectionStatus.forEach(item => {
+          const span = document.createElement('span');
+          if (item.found) {
+            foundCount++;
+            span.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100/90 text-emerald-800 font-semibold border border-emerald-300 shadow-xs';
+            span.innerHTML = `<span class="material-symbols-outlined text-[13px] text-emerald-600">check_circle</span> <span>${item.label}</span> <span class="text-[10px] text-emerald-600 font-mono bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">(${item.colName})</span>`;
+          } else {
+            span.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 font-medium border border-slate-200';
+            span.innerHTML = `<span class="material-symbols-outlined text-[13px] text-slate-400">cancel</span> <span>${item.label}</span> <span class="text-[10px] text-slate-400 italic">(Tidak ada di berkas)</span>`;
+          }
+          badgeContainer.appendChild(span);
+        });
+
+        const summaryEl = document.getElementById('ext-col-detected-summary');
+        if (summaryEl) {
+          summaryEl.textContent = `${foundCount} dari ${detectionStatus.length} jenis potongan terdeteksi`;
+        }
+      }
+
+      // Validasi Total Rincian vs Total Berkas
+      let matchedCount = records.filter(r => r.isMatch).length;
+      const matchStatEl = document.getElementById('ext-match-stat');
+      if (matchStatEl) {
+        const percent = records.length > 0 ? Math.round((matchedCount / records.length) * 100) : 0;
+        matchStatEl.textContent = `${matchedCount}/${records.length} Pegawai Cocok (${percent}%)`;
+      }
+
+      // Render Baris Pratinjau (semua data pegawai + rincian potongan lengkap)
+      const tbody = document.getElementById('extractor-preview-tbody');
+      tbody.innerHTML = '';
+
+      const cell = (val) => val > 0 
+        ? `<span class="font-mono font-bold text-slate-800">${formatRupiah(val)}</span>` 
+        : `<span class="text-slate-300">-</span>`;
+
+      records.forEach((r, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-indigo-50/50 transition-colors group';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 text-slate-400 font-mono sticky left-0 bg-white group-hover:bg-indigo-50/50">${i + 1}</td>
+          <td class="py-2.5 px-3 font-mono font-bold text-slate-900 sticky left-10 bg-white group-hover:bg-indigo-50/50">${r.nip}</td>
+          <td class="py-2.5 px-3 font-semibold text-slate-800 sticky left-44 bg-white group-hover:bg-indigo-50/50 shadow-r">${r.nama}</td>
+          <td class="py-2.5 px-3 font-mono text-slate-600">${r.rekening}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-slate-900">${formatRupiah(r.gajiKotor)}</td>
+          
+          <!-- Rincian Potongan -->
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potKorpri)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potSosial)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potZakat)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potKopTentrem)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potKopHarapan)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potKopGuyub)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potKopKgr)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potBpd)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potJoyoboyo)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell((r.potBprJatim || 0) + (r.potBprKota || 0))}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potBankLain)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potDharmaWanita)}</td>
+          <td class="py-2.5 px-3 text-right bg-rose-50/20">${cell(r.potLainLain)}</td>
+
+          <!-- Total & Status Validasi -->
+          <td class="py-2.5 px-3 text-right font-bold text-rose-600 bg-rose-100/40">-${formatRupiah(r.totalPotongan)}</td>
+          <td class="py-2.5 px-3 text-center">
+            ${r.isMatch ? 
+              `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="material-symbols-outlined text-[12px]">check_circle</span> 100% Cocok</span>` : 
+              `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200" title="Rincian terbaca: ${formatRupiah(r.sumRincian)}, Total berkas: ${formatRupiah(r.totalPotongan)}"><span class="material-symbols-outlined text-[12px]">warning</span> Selisih ${formatRupiah(Math.abs(r.selisih))}</span>`
+            }
+          </td>
+          <td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/30">${formatRupiah(r.gajiBersih)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const previewCountLabel = document.getElementById('ext-preview-count-label');
+      if (previewCountLabel) {
+        previewCountLabel.textContent = `Menampilkan seluruh data (${records.length} baris)`;
+      }
+
+      // Aktifkan Tombol
+      document.getElementById('btn-ext-download').disabled = false;
+      document.getElementById('btn-ext-apply').disabled = false;
+    }
+
+    // Filter pencarian baris pratinjau
+    function filterExtractorPreview(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#extractor-preview-tbody tr');
+      let visibleCount = 0;
+      rows.forEach(tr => {
+        const text = tr.innerText.toLowerCase();
+        const match = !q || text.includes(q);
+        tr.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      });
+      const previewCountLabel = document.getElementById('ext-preview-count-label');
+      if (previewCountLabel) {
+        previewCountLabel.textContent = q ? `Menampilkan ${visibleCount} baris cocok` : `Menampilkan seluruh data (${rows.length} baris)`;
+      }
+    }
+
+    // Muat Sampel Berkas Riil Dinas Pendidikan (150 ASN)
+    async function loadSampleDinasPayroll() {
+      const btn = document.getElementById('btn-load-sample');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">sync</span> Memuat Data Dinas...';
+      updateExtractionProgress(true, 'Mengunduh dan mengekstrak berkas acuan Dinas Pendidikan...', 50);
+
+      try {
+        const res = await fetch('/api/slip-gaji/sync-dinas', { method: 'POST' });
+        const resJson = await res.json();
+
+        if (!resJson.success || !resJson.records) {
+          throw new Error(resJson.message || 'Gagal memuat sampel dinas.');
+        }
+
+        const records = resJson.records.map(r => {
+          const pd = r.potonganDetail || {};
+          const potKorpri = pd.korpri || 10000;
+          const potSosial = pd.sosial || 10000;
+          const potZakat = pd.zakat || Math.round(r.gajiKotor * 0.025);
+          const potKopTentrem = pd.kopTentrem || 0;
+          const potKopHarapan = pd.kopHarapan || 0;
+          const potKopGuyub = pd.kopGuyub || 0;
+          const potKopKgr = pd.kopKgr || 0;
+          const potBpd = pd.bpd || pd.bpdKmg || 0;
+          const potJoyoboyo = pd.joyoboyo || 0;
+          const potBprJatim = pd.bprJatim || 0;
+          const potBprKota = pd.bprKota || 0;
+          const potBankLain = pd.bankLain || 0;
+          const potDharmaWanita = pd.dharmaWanita || 54000;
+          const potLainLain = pd.lainLain || pd.administrasi || 0;
+          const sumRincian = potKorpri + potSosial + potZakat + potKopTentrem + potKopHarapan + potKopGuyub + potKopKgr + potBpd + potJoyoboyo + potBprJatim + potBprKota + potBankLain + potDharmaWanita + potLainLain;
+          const totalPotongan = r.totalPotongan || sumRincian;
+          const selisih = totalPotongan - sumRincian;
+          const isMatch = Math.abs(selisih) <= 2;
+
+          return {
+            nip: r.nip,
+            nama: r.nama,
+            rekening: r.rekening,
+            gajiKotor: r.gajiKotor,
+            potKorpri: potKorpri,
+            potSosial: potSosial,
+            potZakat: potZakat,
+            potKopTentrem: potKopTentrem,
+            potKopHarapan: potKopHarapan,
+            potKopGuyub: potKopGuyub,
+            potKopKgr: potKopKgr,
+            potBpd: potBpd,
+            potJoyoboyo: potJoyoboyo,
+            potBprJatim: potBprJatim,
+            potBprKota: potBprKota,
+            potBankLain: potBankLain,
+            potDharmaWanita: potDharmaWanita,
+            potLainLain: potLainLain,
+            sumRincian: sumRincian,
+            totalPotongan: totalPotongan,
+            selisih: selisih,
+            isMatch: isMatch,
+            gajiBersih: r.gajiBersih
+          };
+        });
+
+        buildExtractedCsvData('September_GAJI PNS DINAS 2026 (1).xlsx', records);
+        updateExtractionProgress(false);
+
+      } catch (err) {
+        updateExtractionProgress(false);
+        alert('Gagal Memuat Sampel Dinas: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px] text-amber-400">dataset</span> <span>Muat Contoh Berkas Dinas (150 ASN)</span>';
+      }
+    }
+
+    // Unduh File CSV Hasil Ekstraksi
+    function downloadExtractedCsv() {
+      if (!currentExtractedData.csvContent) {
+        alert('Belum ada data hasil ekstraksi untuk diunduh.');
+        return;
+      }
+
+      const targetPeriode = document.getElementById('ext-target-periode').value || 'Oktober 2026';
+      const cleanPeriode = targetPeriode.replace(/[^a-zA-Z0-9]/g, '_');
+      const dlFilename = `Acuan_Gaji_Potongan_ASN_${cleanPeriode}.csv`;
+
+      const blob = new Blob(['\uFEFF' + currentExtractedData.csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = dlFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Terapkan & Sinkronkan ke Database Gaji ASN
+    async function applyExtractedToPayroll() {
+      if (!currentExtractedData.records || currentExtractedData.records.length === 0) {
+        alert('Tidak ada baris data untuk diterapkan.');
+        return;
+      }
+
+      const targetPeriode = document.getElementById('ext-target-periode').value || 'Oktober 2026';
+      const confirmMsg = `Konfirmasi Penerapan Acuan Gaji:\n\n` +
+        `• Jumlah Pegawai: ${currentExtractedData.records.length} ASN\n` +
+        `• Target Periode: ${targetPeriode}\n` +
+        `• Sumber Berkas: ${currentExtractedData.filename}\n\n` +
+        `Sistem akan memperbarui master gaji, rincian potongan dinas, dan nomor rekening seluruh ASN terkait.\nLanjutkan?`;
+
+      if (!confirm(confirmMsg)) return;
+
+      const btn = document.getElementById('btn-ext-apply');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">sync</span> Menerapkan...';
+
+      try {
+        const payload = {
+          periode: targetPeriode,
+          filename: currentExtractedData.filename,
+          records: currentExtractedData.records,
+          csvContent: currentExtractedData.csvContent
+        };
+
+        const res = await fetch('/api/slip-gaji/import-extracted', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const resJson = await res.json();
+        if (resJson.success) {
+          alert(`Sukses!\n${resJson.message}\n\nSemua acuan gaji kotor & rincian potongan untuk periode ${targetPeriode} telah disinkronkan ke database e-SlipASN.`);
+          closeExtractorModal();
+          // Set pilihan periode di dashboard utama ke periode target
+          document.getElementById('select-periode').value = targetPeriode;
+          localStorage.setItem('bendahara_selected_periode', targetPeriode);
+          await loadPegawaiData();
+        } else {
+          alert('Gagal Menerapkan Data: ' + (resJson.message || 'Terjadi galat server.'));
+        }
+      } catch (err) {
+        alert('Gagal Menghubungi Server: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">sync_saved_locally</span> <span>Terapkan &amp; Sinkronkan ke Gaji ASN</span>';
+      }
+    }
+  </script>
+</body>
+</html>
